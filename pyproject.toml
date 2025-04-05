@@ -1,0 +1,31 @@
+[project]
+name = "votox"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "angelo-francisco",email = "ics20080729@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10,<4.0.0"
+dependencies = [
+    "django (>=5.2,<6.0)",
+    "channels (>=4.2.2,<5.0.0)",
+    "daphne (>=4.1.2,<5.0.0)",
+    "channels-redis (>=4.2.1,<5.0.0)",
+    "python-dotenv (>=1.1.0,<2.0.0)",
+]
+
+
+[tool.taskipy.tasks]
+run = 'python manage.py runserver'
+mg = 'python manage.py migrate'
+mkmg = 'python manage.py makemigrations'
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+ignr = "^2.2"
+taskipy = "^1.14.1"
+
