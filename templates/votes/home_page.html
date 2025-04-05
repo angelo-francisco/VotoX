@@ -1,4 +1,4 @@
-{% extends 'layouts/votes_layout.html' %}
+{% extends 'layouts/layout.html' %}
 {% load static %}
 
 {% block head %}
@@ -9,5 +9,30 @@ Home Page
 {% endblock %}
 
 {% block content %}
+
+<main>
+    <section class="welcome">
+        <div class="join-poll">
+            <span class="join-poll-main-span">Join In A Poll</span>
+            <div class="input-group">
+                <span class="hash">#</span>
+                <input type="text" placeholder="Enter your poll">
+                <button class="hash2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+                      </svg>
+                </button>
+            </div>            
+        </div>
+        <div class="text-center">
+            <h1>The easiest way to create and share polls with friends and family.</h1>
+            <p>Engage your participants with real time polls - Create and share it easily</p>
+            <div class="welcome-img">
+                <img src="{% static 'imgs/welcome-img.jpg' %}" alt="Welcome Img">
+            </div>
+            <button class="btn-start">Start</button>
+        </div>
+    </section>
+</main>
 
 {% endblock %}
