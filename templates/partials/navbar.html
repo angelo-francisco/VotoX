@@ -1,5 +1,4 @@
 <nav>
-
     <div class="left">
         <div class="logo">
             <span>votox</span>
@@ -13,9 +12,7 @@
             </ul>
         </div>
     </div>
-
     <div class="right">
-        
         {% if not request.user.is_authenticated %}
             <div class="side-to-side">
                 <button class="btn-login"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-lock" viewBox="0 0 16 16">
@@ -28,7 +25,5 @@
                 {{ request.user.username|slice:"2" }}
             </div>
         {% endif %}
-            
     </div>
-
 </nav>
