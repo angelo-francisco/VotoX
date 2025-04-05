@@ -28,4 +28,5 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.group.dev.dependencies]
 ignr = "^2.2"
 taskipy = "^1.14.1"
+django-browser-reload = "^1.18.0"
 
