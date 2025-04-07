@@ -26,11 +26,23 @@ Home Page | Votox
         </div>
         <div class="text-center">
             <h1>The easiest way to create and share polls with friends and family</h1>
-            <p>Engage your participants with real-time polls - create and share them easily</p>        
-            <button class="btn-start">
+            <p>Engage your participants with real-time polls - create and share them easily</p> 
+            
+            
+            {% if not request.user.is_authenticated %}
+            <button class="btn-start" onclick="window.location.href='{% url 'login' %}'">
                 Get Started
                 <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
             </button>
+            {% else %}
+            {% comment %}
+            change the link
+            {% endcomment %}
+            <button class="btn-start" onclick="window.location.href='{% url 'login' %}'">
+                Create a Poll
+                <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+            </button>
+            {% endif %}
         </div>
     </section>
 </main>
