@@ -114,7 +114,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [BASE_DIR.joinpath('static'),]
+
 STATIC_ROOT = BASE_DIR.joinpath('staticfiles')
 
 LOGIN_URL = '/accounts/login/'
@@ -133,8 +135,31 @@ MEDIA_ROOT = BASE_DIR.joinpath('media')
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
+
 EMAIL_PORT = os.environ.get("EMAIL_PORT", "")
+
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', "")
+
 EMAIL_USE_TLS = True
+
 EMAIL_USE_SSL = False
+
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "")
+
+SITE_NAME = 'Votox'
+
+PASSWORD_RESET_TIMEOUT = 15 * 60
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "")
+
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "")
+
+CELERY_ACCEPT_CONTENT = ['json']
+
+CELERY_TASK_SERIALIZER = 'json'
+
+CELERY_TIMEZONE = 'Africa/Luanda'
+
+CELERY_ENABLE_UTC = False

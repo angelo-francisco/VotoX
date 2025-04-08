@@ -6,7 +6,7 @@
 {% endblock head %}
 
 {% block content %}
-    {% include 'partials/messages.html' %}
+{% include 'partials/messages.html' %}
     <div class="login-container">
         <div class="login-header">
             <h1 class="login-title">
@@ -58,7 +58,7 @@
                 </div>
                 
                 <div class="login-links">
-                    <a href="" class="forgot-password">Forgot password?</a>
+                    <a href="{% url 'forgot_password' %}" class="forgot-password">Forgot password?</a>
                     <span>Don't have an account? <a href="{% url 'signup' %}" class="signup-link">Sign up</a></span>
                 </div>
             </form>

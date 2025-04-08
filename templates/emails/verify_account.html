@@ -30,14 +30,14 @@
 </head>
 <body>
     <div class="container">
-        <h2>Verificação de E-mail</h2>
-        <p>Olá, {{ username }}!</p>
-        <p>Use o seguinte código para verificar seu e-mail:</p>
+        <h2>Verify Your Email</h2>
+        <p>Hello, {{ username }}!</p>
+        <p>Use the following code to verify your account:</p>
         <div class="code">{{ verification_code }}</div>
-        <p>Este código expirará em 5 minutos.</p>
+        <p>This code will expire after 5 minutes.</p>
         <div class="footer">
-            <p>Se você não solicitou este código, por favor ignore este e-mail.</p>
-            <p>Atenciosamente,<br>Equipe {{ site_name }}.</p>
+            <p>If you didn't request this email, ignore it.</p>
+            <p>&copy;{{ site_name }}. All rights reserved</p>
         </div>
     </div>
 </body>

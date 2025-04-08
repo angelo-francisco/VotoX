@@ -24,6 +24,9 @@ class VerificationCode(models.Model):
     code = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
     is_used = models.BooleanField(default=False)
+    purpose = models.CharField(max_length=5, choices=(
+        ('VA', 'Verify-Account'),
+    ), null=True, blank=True)
 
     @staticmethod
     def generate_code(length=6):
