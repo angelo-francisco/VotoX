@@ -1,0 +1,71 @@
+{% extends 'layouts/accounts.html' %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/accounts/login.css' %}">
+{% endblock head %}
+
+{% block content %}
+    {% include 'partials/messages.html' %}
+    <div class="login-container">
+        <div class="login-header">
+            <h1 class="login-title">
+                Set Profile Photo
+            </h1>
+            <p class="login-subtitle">Finish your account settings.</p>
+        </div>
+        
+        <hr class="login-divider">
+
+        <form action="{% url 'signup' %}?step=profile-photo&user={{ user.username }}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="avatar-upload">
+                <div class="avatar-edit">
+                    <input type="file" id="imageUpload" name="profile-photo" accept=".png, .jpg, .jpeg" />
+                    <label for="imageUpload">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </label>
+
+                </div>
+                <div class="avatar-preview">
+                    <div id="imagePreview" class="initials-avatar">
+                        {{ user.username|slice:":2"|upper }}
+                    </div>
+                </div>
+            </div>
+            <small style="color: gray;">We just accept .jpg, .png or .jpeg and the size need to be lower than 2MB.</small>
+            
+            <div class="btns" style="display: flex;gap: 10px;">
+                <a href="{% url 'login' %}" class="login-button" style="background-color: #ccc;color: #333;text-align: center;text-decoration: none;">Skip</a>
+                <button type="submit" class="login-button">Save Profile</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        document.getElementById('imagePreview').style.backgroundImage = 'url(' + e.target.result + ')';
+                    }
+                    
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+            
+            document.getElementById('imageUpload').addEventListener('change', function() {
+                readURL(this);
+
+                document.querySelector('#imagePreview')
+                .innerText = ''
+            });
+        });
+    </script>
+{% endblock content %}

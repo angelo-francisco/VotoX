@@ -22,7 +22,7 @@
             </div>
         {% else %}
             <div class="user-image">
-                {{ request.user.username|slice:"2" }}
+                {{ request.user.username|slice:"2"|upper }}
             </div>
         {% endif %}
     </div>

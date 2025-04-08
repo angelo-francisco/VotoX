@@ -6,6 +6,7 @@
 {% endblock head %}
 
 {% block content %}
+    {% include 'partials/messages.html' %}
     <div class="login-container">
         <div class="login-header">
             <h1 class="login-title">
@@ -39,7 +40,7 @@
         <hr class="login-divider">
         
         <div class="login-form">
-            <form action="{% url 'login' %}" method="post">
+            <form action="{% url 'signup' %}" method="post">
                 {% csrf_token %}
                 
                 <div class="form-item">

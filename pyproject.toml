@@ -14,6 +14,7 @@ dependencies = [
     "channels-redis (>=4.2.1,<5.0.0)",
     "python-dotenv (>=1.1.0,<2.0.0)",
     "pillow (>=11.1.0,<12.0.0)",
+    "social-auth-app-django (>=5.4.3,<6.0.0)",
 ]
 
 
