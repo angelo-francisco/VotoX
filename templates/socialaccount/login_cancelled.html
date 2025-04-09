@@ -1,0 +1,46 @@
+{% extends 'layouts/accounts.html' %}
+
+{% load socialaccount %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/accounts/login.css' %}">
+
+  <style>
+    .loader {
+        width: 20px;
+        height: 20px;
+        border: 3px solid red;
+        border-top: 3px solid transparent;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        margin: 10px auto;
+    }
+    
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+{% include 'partials/messages.html' %}
+    
+<div class="login-container">
+    <div class="login-header">
+        <h1 class="login-title">Login Cancelled</h1>
+        <p class="login-subtitle" style="color: #333;">You decided to cancel the social login, redirecting to login page.</p>
+    </div>
+
+    <div class="loader"></div>
+
+</div>
+
+<script>
+    setTimeout(() => {
+    window.location.href="{% url 'login' %}"
+    }, 3000)
+</script>
+{% endblock %}
