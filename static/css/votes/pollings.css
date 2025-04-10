@@ -7,6 +7,10 @@ main {
     align-items: center;
 }
 
+*::selection {
+    background-color: #00000016;
+}
+
 h1 {
     font-size: 3rem;
     font-weight: 700;
@@ -97,6 +101,7 @@ hr {
 
 .polls {
     margin-top: 40px;
+    margin-bottom: 20px;
     width: 80%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -104,6 +109,7 @@ hr {
 }
 
 .poll-card {
+    max-width: 300px;
     border-radius: 12px;
     background-color: #fff;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
@@ -114,27 +120,35 @@ hr {
     transition: transform 0.2s;
 }
 
-.poll-card:hover {
-    transform: translateY(-5px);
-}
-
 .card-img img {
+    user-select: none;
+    -moz-user-select: none;
     width: 100%;
     height: 160px;
     object-fit: cover;
+    border-bottom: 1px solid #e3e1e1;
 }
 
 .card-body {
-    padding: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 5px;
+    padding-bottom: 8px;
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
 .card-title {
+    cursor: pointer;
     font-size: 1.2rem;
     font-weight: bold;
+    transition: all .3s;
+}
+
+.card-title:hover {
     color: var(--primary);
+
 }
 
 .card-desc {
@@ -144,10 +158,31 @@ hr {
 
 .poll-info {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    flex-direction: row;
     font-size: 0.85rem;
     color: #666;
     gap: 5px;
+}
+
+.infos {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.star {
+    color: rgb(255, 204, 0);
+}
+
+.vote-box {
+    color: var(--primary);
+}
+
+.poll-votes {
+    display: flex;
+    align-items: center;
+    gap:5px;
 }
 
 .tag {
@@ -157,24 +192,4 @@ hr {
     border-radius: 12px;
     font-size: 0.75rem;
     width: fit-content;
-}
-
-.card-footer {
-    padding: 16px;
-    border-top: 1px solid #eee;
-    text-align: center;
-}
-
-.vote-btn {
-    padding: 8px 16px;
-    border-radius: 25px;
-    background-color: var(--primary);
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-
-.vote-btn:hover {
-    background-color: #c62828;
 }
