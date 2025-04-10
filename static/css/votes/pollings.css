@@ -1,5 +1,5 @@
 main {
-    margin-top: 40px;
+    margin-top: 10px;
     min-width: 100%;
     display: flex;
     flex-direction: column;
@@ -96,15 +96,15 @@ hr {
 }
 
 .header {
+    padding: 20px;
     text-align: center;
 }
 
 .polls {
-    margin-top: 40px;
-    margin-bottom: 20px;
     width: 80%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    align-items: center;
     gap: 20px;
 }
 
@@ -192,4 +192,20 @@ hr {
     border-radius: 12px;
     font-size: 0.75rem;
     width: fit-content;
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    .helper-h1 {
+        font-size: 18px;
+    }
+
+    .polls {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
 }
