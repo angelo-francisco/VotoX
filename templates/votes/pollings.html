@@ -1,0 +1,47 @@
+{% extends 'layouts/layout.html' %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/votes/pollings.css' %}">
+{% endblock %}
+
+{% block title %}
+Pollings
+{% endblock %}
+
+{% block content %}
+<main>
+    <section class="header">
+        <h1>Community Pollings</h1>
+        <small class="helper-h1">Help people to answer colective questions, participate on a poll.</small>
+        <hr>
+        <div class="input-group">
+            <input type="text" placeholder="Search for a poll">
+            <button class="hash2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+            </button>
+        </div>
+    </section>
+    <section class="polls">
+        <div class="poll-card">
+            <div class="card-img">
+                <img src="{% static 'imgs/welcome-img.jpg' %}" alt="Poll Image">
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">Votação dos melhores alimentos</h3>
+                <p class="card-desc">Qual é o melhor alimento quando a fome bate de surpresa? Participe da votação!</p>
+                <div class="poll-info">
+                    <span class="tag">🍔 Comida</span>
+                    <span class="poll-date">📅 Criado em: 05/04/2025</span>
+                    <span class="poll-votes">🗳️ 245 votos</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="vote-btn">Votar Agora</a>
+            </div>
+        </div>
+    </section>    
+</main>
+{% endblock %}
