@@ -23,7 +23,8 @@ def poll_detail(request, username, poll_slug):
 
     ctx = {
         'poll': poll,
-        'owner': owner
+        'owner': owner,
+        'link': request.build_absolute_uri()
     }
 
     return render(request, 'votes/poll_detail.html', ctx)
