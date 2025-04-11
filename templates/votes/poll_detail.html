@@ -1,0 +1,24 @@
+{% extends 'layouts/layout.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/votes/poll_detail.css' %}">
+{% endblock %}
+
+{% block title %}
+{{ poll.title }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="card">
+            <div class="info">
+                <h1>{{ poll.title }}</h1>
+                <p>{{ poll.description }}</p>
+            </div>
+            <div class="extra-info">
+                    
+            </div>
+        </div>
+    </div>
+{% endblock %}
