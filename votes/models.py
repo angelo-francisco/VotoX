@@ -59,3 +59,10 @@ class Poll(models.Model):
 
     def __str__(self):
         return self.title
+    
+
+class Comment(models.Model):
+    poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name='comments')
+    commented_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)

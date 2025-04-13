@@ -25,6 +25,7 @@ dependencies = [
 run = 'python manage.py runserver'
 mg = 'python manage.py migrate'
 mkmg = 'python manage.py makemigrations'
+reload = 'task mkmg && task mg && task run 0.0.0.0:8000'
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

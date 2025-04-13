@@ -76,11 +76,11 @@
           <div class="detail-content">
             <h2>Comments</h2>
 
-            <form method="post" action="">
+            <form method="post" hx-post="{% url 'manage_comments' poll_slug=poll.slug %}">
               {% csrf_token %}
               <div class="comment-form">
                 <textarea name="comment" placeholder="Write your comment right here" rows="1" class="comment-input"></textarea>
-                <button type="submit" class="vote-btn-2">
+                <button type="submit" class="vote-btn-2" style="cursor: pointer;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="color: white;" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
                     <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
                   </svg>
@@ -88,24 +88,7 @@
               </div>
             </form>
 
-            <div class="comments-list">
-              {% for comment in poll.comments.all %}
-                <div class="comment-item">
-                  <div class="comment-header">
-                    <div class="author-avatar small">{{ comment.user.first_name|first }}</div>
-                    <div class="comment-meta">
-                      <div class="comment-author">{{ comment.user.get_full_name }}</div>
-                      <div class="comment-date">{{ comment.created_at|date:'d/m/Y H:i' }}</div>
-                    </div>
-                  </div>
-                  <div class="comment-text">{{ comment.text }}</div>
-                </div>
-              {% empty %}
-                <div class="empty-comments">
-                  <p>There's no comments here. Do it first!</p>
-                </div>
-              {% endfor %}
-            </div>
+            {% include 'partials/comments.html' %}
           </div>
         </div>
       </div>
@@ -227,7 +210,7 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async function () {
       const link = '{{ link }}'
@@ -243,27 +226,30 @@
     })
     
     copyLink = (link) => {
-      const type = 'text/plain'; // muda para texto puro
-      const blob = new Blob([link], { type });
-      const item = new ClipboardItem({ [type]: blob });
+      const type = 'text/plain'
+      const blob = new Blob([link], { type })
+      const item = new ClipboardItem({ [type]: blob })
     
-      navigator.clipboard.write([item]).then(() => {
-        document.querySelector('#copy-btn').innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" style="color: green;" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
-            <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
-          </svg> Copiado`;
-    
-        setTimeout(() => {
+      navigator.clipboard
+        .write([item])
+        .then(() => {
           document.querySelector('#copy-btn').innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
-              <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
-              <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
-            </svg>Copiar`;
-        }, 3000);
-      }).catch((err) => {
-        console.error("Erro ao copiar:", err);
-      });
-    }
+              <svg xmlns="http://www.w3.org/2000/svg" style="color: green;" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+                <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+              </svg> Copied`
+          document.querySelector('#copy-btn').setAttribute('disabled', '')
     
+          setTimeout(() => {
+            document.querySelector('#copy-btn').innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                  <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+                  <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+                </svg> Copy`
+          }, 3000)
+        })
+        .catch((err) => {
+          console.error('Erro ao copiar:', err)
+        })
+    }
   </script>
-{% endblock %}
+{% endblock %}uy78ujhn

@@ -129,3 +129,16 @@
     justify-content: center;
     align-items: center;
 }
+
+.paginators {
+    display: flex;
+    width: 100%;
+    justify-content: right;
+}
+
+.paginator {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    color: var(--primary);
+}
