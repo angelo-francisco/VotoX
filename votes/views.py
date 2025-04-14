@@ -1,8 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import Poll, Comment
+from .models import Comment, Poll
 
 User = get_user_model()
 
@@ -21,7 +22,7 @@ def pollings(request):
 def poll_detail(request, username, poll_slug):
     owner = get_object_or_404(User, username=username)
     poll = get_object_or_404(Poll, created_by=owner, slug=poll_slug)
-    comments = Paginator(Comment.objects.filter(poll=poll), 5).get_page(1)
+    comments = Paginator(Comment.objects.filter(poll=poll).order_by('-created_at'), 5).get_page(1)
 
     if hasattr("request", "htmx"):
         ...
@@ -37,10 +38,8 @@ def poll_detail(request, username, poll_slug):
 
 
 def manage_comments(request, poll_slug):
-    from time import sleep
-
     poll = get_object_or_404(Poll, slug=poll_slug)
-    comments = Paginator(Comment.objects.filter(poll=poll), 5)
+    comments = Paginator(Comment.objects.filter(poll=poll).order_by('-created_at'), 5)
 
     if request.method == "GET":
         get_next_page = request.GET.get("get_next_page", "").strip()
@@ -50,6 +49,17 @@ def manage_comments(request, poll_slug):
             comments = comments.get_page(int(get_next_page))
         elif get_previous_page:
             comments = comments.get_page(int(get_previous_page))
+
+    if request.method == "POST" and request.user.is_authenticated:
+        body = request.POST.get("comment", "").strip()
+
+        if not body:
+            ...
+        else:
+            Comment.objects.create(
+                commented_by=request.user, poll=poll, body=body
+            )
+            comments = Paginator(Comment.objects.all().order_by('-created_at'), 5).get_page(1)
 
     ctx = {"comments": comments, "poll": poll}
 
