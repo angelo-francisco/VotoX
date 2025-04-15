@@ -56,13 +56,18 @@ class Poll(models.Model):
     @property
     def get_votes_count(self): ...
 
-
     def __str__(self):
         return self.title
-    
+
+
+class PollOption(models.Model):
+    poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name="options")
+    option = models.CharField(max_length=200)
+    votes = models.ManyToManyField(User)
+
 
 class Comment(models.Model):
-    poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name='comments')
+    poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name="comments")
     commented_by = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

@@ -172,7 +172,7 @@ def signup(request):
                     reverse("signup") + "?step=profile-photo&user=" + username
                 )
 
-            if profile_photo.size > (2 * 1024):
+            if profile_photo.size > (2 * 1024 * 1024):
                 messages.error(request, "File size is above 2MB.")
                 return redirect(
                     reverse("signup") + "?step=profile-photo&user=" + username
