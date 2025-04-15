@@ -8,238 +8,328 @@
 {% block head %}
   <link rel="stylesheet" href="{% static 'css/votes/pollings.css' %}" />
   <link rel="stylesheet" href="{% static 'css/votes/new_poll.css' %}" />
+
+  <style>
+    .form-errors {
+      margin-bottom: 20px;
+    }
+    
+    .alert-error {
+      padding: 10px 15px;
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    
+    .field-errors .error {
+      color: #dc3545;
+      font-size: 0.875rem;
+      margin-top: 5px;
+      display: block;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-  <div class="header">
-    <h1>Create a New Poll</h1>
-    <span class="helper-h1">Share your question with the community and gather opinions</span>
-  </div>
+    {% include 'partials/messages.html' %}
+    <div class="header">
+      <h1>Create a New Poll</h1>
+      <span class="helper-h1">Share your question with the community and gather opinions</span>
+    </div>
 
-  <div class="poll-form-container">
-    <form method="POST" action="{% url 'new_poll' %}" enctype="multipart/form-data" class="poll-form">
-      {% csrf_token %}
-      <div class="form-group">
-        <label for="cover">Poll Cover Image (Optional)</label>
-        <div class="cover-upload">
-          <input type="file" id="cover" name="cover" accept="image/*" class="file-input">
-          <label for="cover" class="upload-preview">
-            <img id="cover-preview" src="#" alt="Cover preview" class="preview-image">
-            <div class="upload-placeholder">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
-                <line x1="16" y1="5" x2="22" y2="5"></line>
-                <line x1="19" y1="2" x2="19" y2="8"></line>
-                <circle cx="9" cy="9" r="2"></circle>
-                <path d="M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+    <div class="poll-form-container">
+      <form method="POST" action="{% url 'new_poll' %}" enctype="multipart/form-data" class="poll-form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="form-errors">
+            {% for error in form.non_field_errors %}
+              <div class="alert alert-error">{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <div class="form-group">
+          <label for="cover">{{ form.cover.label }}</label>
+          <div class="cover-upload">
+            {{ form.cover }}
+            {% if form.cover.errors %}
+              <div class="field-errors">
+                {% for error in form.cover.errors %}
+                  <small class="error">{{ error }}</small>
+                {% endfor %}
+              </div>
+            {% endif %}
+            <label for="cover" class="upload-preview">
+              <img id="cover-preview" src="#" alt="Cover preview" class="preview-image" />
+              <div class="upload-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
+                  <line x1="16" y1="5" x2="22" y2="5"></line>
+                  <line x1="19" y1="2" x2="19" y2="8"></line>
+                  <circle cx="9" cy="9" r="2"></circle>
+                  <path d="M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                </svg>
+                <span class="placeholder-text">Click to upload an image</span>
+                <span class="file-size-info">JPG, PNG, JPEG up to 5MB</span>
+              </div>
+            </label>
+            <button type="button" class="clear-image-btn" style="display: none;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
-              <span class="placeholder-text">Click to upload an image</span>
-              <span class="file-size-info">JPG, PNG, JPEG up to 5MB</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Poll Title -->
+        <div class="form-group">
+          <label for="title">Poll Question</label>
+          {{ form.title }}
+          {% if form.title.errors %}
+            <div class="field-errors">
+              {% for error in form.title.errors %}
+                <small class="error">{{ error }}</small>
+              {% endfor %}
             </div>
-          </label>
-          <button type="button" class="clear-image-btn" style="display: none;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
+          {% endif %}
         </div>
-      </div>
-      
-      <!-- Poll Title -->
-      <div class="form-group">
-        <label for="title">Poll Question</label>
-        <input type="text" id="title" name="title" placeholder="Enter your poll question" required>
-      </div>
-      
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea id="description" name="description" rows="4" placeholder="Add more details about your poll"></textarea>
-      </div>
-      
-      <div class="form-group">
-        <label for="category">Category</label>
-        <select id="category" name="category" required>
-          {% for value, label in categories %}
-            <option value="{{ value }}">{{ label }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      
-      <!-- Poll Options -->
-      <div class="form-group">
-        <label>Poll Options</label>
-        <div class="options-container">
-          <div class="option-input-group">
-            <input type="text" name="option1" placeholder="Option 1" required>
-            <button type="button" class="remove-option" style="display: none;">×</button>
+
+        <div class="form-group">
+          <label for="description">{{ form.description.label }}</label>
+          {{ form.description }}
+          {% if form.description.errors %}
+            <div class="field-errors">
+              {% for error in form.description.errors %}
+                <small class="error">{{ error }}</small>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="category">{{ form.category.label }}</label>
+          {{ form.category }}
+          {% if form.category.errors %}
+            <div class="field-errors">
+              {% for error in form.category.errors %}
+                <small class="error">{{ error }}</small>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label>Poll Options</label>
+          <div class="options-container">
+            {% for option in options %}
+              <div class="option-input-group">{{ option }}</div>
+            {% endfor %}
+
+            {% if options.errors %}
+              <div class="field-errors">
+                {% for error in options.errors %}
+                  <small class="error">{{ error }}</small>
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
-          <div class="option-input-group">
-            <input type="text" name="option2" placeholder="Option 2" required>
-            <button type="button" class="remove-option" style="display: none;">×</button>
+          <button type="button" class="add-option-btn">+ Add Another Option</button>
+        </div>
+
+        <div class="form-group settings-group">
+          <label>Poll Settings</label>
+
+          {% if form.is_public.errors %}
+            <div class="field-errors">
+              {% for error in form.is_public.errors %}
+                <small class="error">{{ error }}</small>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {% if form.is_anonymous.errors %}
+            <div class="field-errors">
+              {% for error in form.is_anonymous.errors %}
+                <small class="error">{{ error }}</small>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {% if form.results_visible.errors %}
+            <div class="field-errors">
+              {% for error in form.results_visible.errors %}
+                <small class="error">{{ error }}</small>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {% if form.end_at.errors %}
+            <div class="field-errors">
+              {% for error in form.end_at.errors %}
+                <small class="error">{{ error }}</small>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {% if form.max_votes.errors %}
+            <div class="field-errors">
+              {% for error in form.max_votes.errors %}
+                <small class="error">{{ error }}</small>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>{{ form.is_public.label }}</h4>
+              <p>{{ form.is_public.help_text }}</p>
+            </div>
+            <label class="switch">
+              {{ form.is_public }}
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>{{ form.is_anonymous.label }}</h4>
+              <p>{{ form.is_anonymous.help_text }}</p>
+            </div>
+            <label class="switch">
+              {{ form.is_anonymous }}
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>{{ form.results_visible.label }}</h4>
+              <p>{{ form.results_visible.help_text }}</p>
+            </div>
+            <label class="switch">
+              {{ form.results_visible }}
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>{{ form.end_at.label }}</h4>
+              <p>{{ form.end_at.help_text }}</p>
+            </div>
+            {{ form.end_at }}
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>{{ form.max_votes.label }}</h4>
+              <p>{{ form.max_votes.help_text }}</p>
+            </div>
+            {{ form.max_votes }}
           </div>
         </div>
-        <button type="button" class="add-option-btn">+ Add Another Option</button>
-      </div>
-      
-      <!-- Poll Settings -->
-      <div class="form-group settings-group">
-        <label>Poll Settings</label>
-        
-        <div class="setting-item">
-          <div class="setting-info">
-            <h4>Visibility</h4>
-            <p>Make this poll public or private</p>
-          </div>
-          <label class="switch">
-            <input type="checkbox" name="is_public" checked>
-            <span class="slider round"></span>
-          </label>
+
+        <div class="form-actions">
+          <button type="submit" class="submit-btn">Create Poll</button>
+          <a href="{% url 'pollings' %}" class="cancel-btn">Cancel</a>
         </div>
-        
-        <div class="setting-item">
-          <div class="setting-info">
-            <h4>Anonymous Voting</h4>
-            <p>Hide voter identities</p>
-          </div>
-          <label class="switch">
-            <input type="checkbox" name="is_anonymous">
-            <span class="slider round"></span>
-          </label>
-        </div>
-        
-        <div class="setting-item">
-          <div class="setting-info">
-            <h4>Show Results</h4>
-            <p>Allow voters to see results</p>
-          </div>
-          <label class="switch">
-            <input type="checkbox" name="results_visible" checked>
-            <span class="slider round"></span>
-          </label>
-        </div>
-        
-        <div class="setting-item">
-          <div class="setting-info">
-            <h4>End Date</h4>
-            <p>Set when this poll should close</p>
-          </div>
-          <input type="datetime-local" name="end_at">
-        </div>
-        
-        <div class="setting-item">
-          <div class="setting-info">
-            <h4>Max Votes</h4>
-            <p>Limit total votes (leave blank for unlimited)</p>
-          </div>
-          <input type="number" name="max_votes" min="1" placeholder="Unlimited">
-        </div>
-      </div>
-      
-      <div class="form-actions">
-        <button type="submit" class="submit-btn">Create Poll</button>
-        <a href="" class="cancel-btn">Cancel</a>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
-</div>
 
-<script>
-  document.getElementById('cover').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const preview = document.getElementById('cover-preview');
-        preview.src = e.target.result;
-        preview.style.display = 'block';
-        document.querySelector('.upload-placeholder').style.display = 'none';
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  document.querySelector('.add-option-btn').addEventListener('click', function() {
-    const optionsContainer = document.querySelector('.options-container');
-    const optionCount = optionsContainer.children.length + 1;
-    
-    const optionGroup = document.createElement('div');
-    optionGroup.className = 'option-input-group';
-    
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.name = 'option' + optionCount;
-    input.placeholder = 'Option ' + optionCount;
-    
-    const removeBtn = document.createElement('button');
-    removeBtn.type = 'button';
-    removeBtn.className = 'remove-option';
-    removeBtn.textContent = '×';
-    removeBtn.addEventListener('click', function() {
-      optionsContainer.removeChild(optionGroup);
-    });
-    
-    optionGroup.appendChild(input);
-    optionGroup.appendChild(removeBtn);
-    optionsContainer.appendChild(optionGroup);
-    
-    document.querySelectorAll('.remove-option').forEach(btn => {
-      btn.style.display = 'inline-block';
-    });
-  });
-
-  document.querySelectorAll('.option-input-group input').forEach(input => {
-    input.addEventListener('input', function() {
-      if (this.value.trim() !== '') {
-        this.nextElementSibling.style.display = 'inline-block';
-      }
-    });
-  });
-  document.addEventListener('DOMContentLoaded', function() {
-    const coverInput = document.getElementById('cover');
-    const preview = document.getElementById('cover-preview');
-    const clearBtn = document.querySelector('.clear-image-btn');
-    const uploadPreview = document.querySelector('.upload-preview');
-    const placeholder = document.querySelector('.upload-placeholder');
-
-    coverInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
+  <script>
+    document.getElementById('cover').addEventListener('change', function (e) {
+      const file = e.target.files[0]
       if (file) {
-        const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        const maxSize = 2 * 1024 * 1024; 
-        
-        if (!validTypes.includes(file.type)) {
-          alert('Please upload a valid image file (JPG, PNG)');
-          return;
+        const reader = new FileReader()
+        reader.onload = function (e) {
+          const preview = document.getElementById('cover-preview')
+          preview.src = e.target.result
+          preview.style.display = 'block'
+          document.querySelector('.upload-placeholder').style.display = 'none'
         }
-        
-        if (file.size > maxSize) {
-          alert('Image size should be less than 2MB');
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          preview.src = e.target.result;
-          preview.style.display = 'block';
-          placeholder.style.display = 'none';
-          clearBtn.style.display = 'block';
-          uploadPreview.style.border = 'none';
-        };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file)
       }
-    });
-
-    clearBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      coverInput.value = '';
-      preview.src = '#';
-      preview.style.display = 'none';
-      placeholder.style.display = 'flex';
-      clearBtn.style.display = 'none';
-      uploadPreview.style.border = '2px dashed var(--border)';
-    });
-  });
-</script>
+    })
+    
+    document.querySelector('.add-option-btn').addEventListener('click', function () {
+      const optionsContainer = document.querySelector('.options-container')
+      const optionCount = optionsContainer.children.length + 1
+    
+      const optionGroup = document.createElement('div')
+      optionGroup.className = 'option-input-group'
+    
+      const input = document.createElement('input')
+      input.type = 'text'
+      input.name = 'option' + optionCount
+      input.required = true
+      input.placeholder = 'Option ' + optionCount
+    
+      const removeBtn = document.createElement('button')
+      removeBtn.type = 'button'
+      removeBtn.className = 'remove-option'
+      removeBtn.textContent = '×'
+      removeBtn.addEventListener('click', function () {
+        optionsContainer.removeChild(optionGroup)
+      })
+    
+      optionGroup.appendChild(input)
+      optionGroup.appendChild(removeBtn)
+      optionsContainer.appendChild(optionGroup)
+    
+      document.querySelectorAll('.remove-option').forEach((btn) => {
+        btn.style.display = 'inline-block'
+      })
+    })
+    
+    document.querySelectorAll('.option-input-group input').forEach((input) => {
+      input.addEventListener('input', function () {
+        if (this.value.trim() !== '') {
+          this.nextElementSibling.style.display = 'inline-block'
+        }
+      })
+    })
+    document.addEventListener('DOMContentLoaded', function () {
+      const coverInput = document.getElementById('cover')
+      const preview = document.getElementById('cover-preview')
+      const clearBtn = document.querySelector('.clear-image-btn')
+      const uploadPreview = document.querySelector('.upload-preview')
+      const placeholder = document.querySelector('.upload-placeholder')
+    
+      coverInput.addEventListener('change', function (e) {
+        const file = e.target.files[0]
+        if (file) {
+          const validTypes = ['image/jpeg', 'image/png', 'image/jpg']
+          const maxSize = 2 * 1024 * 1024
+    
+          if (!validTypes.includes(file.type)) {
+            return
+          }
+    
+          if (file.size > maxSize) {
+            return
+          }
+    
+          const reader = new FileReader()
+          reader.onload = function (e) {
+            preview.src = e.target.result
+            preview.style.display = 'block'
+            placeholder.style.display = 'none'
+            clearBtn.style.display = 'block'
+            uploadPreview.style.border = 'none'
+          }
+          reader.readAsDataURL(file)
+        }
+      })
+    
+      clearBtn.addEventListener('click', function (e) {
+        e.stopPropagation()
+        coverInput.value = ''
+        preview.src = '#'
+        preview.style.display = 'none'
+        placeholder.style.display = 'flex'
+        clearBtn.style.display = 'none'
+        uploadPreview.style.border = '2px dashed var(--border)'
+      })
+    })
+  </script>
 {% endblock %}

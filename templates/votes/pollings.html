@@ -10,6 +10,7 @@
 {% endblock %}
 
 {% block content %}
+  {% include 'partials/messages.html' %}
   <div class="container" id="poll-list-view">
     <section class="header">
       <h1>Community Pollings</h1>
@@ -34,15 +35,17 @@
     <section class="polls">
       {% for poll in polls %}
         <div class="poll-card">
-          <div class="card-img">
-            <img src="{{ poll.cover.url }}" alt="{{ poll.title }}" />
-            <span class="category-badge">{{ poll.get_category_display }}</span>
-          </div>
+          {% if poll.cover %}
+            <div class="card-img">
+              <img src="{{ poll.cover.url }}" alt="{{ poll.title }}" />
+              <span class="category-badge">{{ poll.get_category_display }}</span>
+            </div>
+          {% endif %}
           <div class="card-body">
-            <h3 
-            class="card-title" 
-            onclick="window.location.href='{% url 'poll_detail' username=poll.created_by.username poll_slug=poll.slug %}'"
-            >{{ poll.title }}</h3>
+            {% if not poll.cover %}
+              <span class="category-badge-2">{{ poll.get_category_display }}</span>
+            {% endif %}
+            <h3 class="card-title" onclick="window.location.href='{% url 'poll_detail' username=poll.created_by.username poll_slug=poll.slug %}'">{{ poll.title }}</h3>
             <p class="card-desc">{{ poll.description }}</p>
             <div class="poll-info">
               {% if poll.was_edited %}

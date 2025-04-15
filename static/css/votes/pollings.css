@@ -203,6 +203,13 @@ input[type="text"]:focus {
   z-index: 1;
 }
 
+.category-badge-2 {
+  color: var(--primary);
+  font-size: 0.90rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
 .card-body {
   padding: 16px;
   display: flex;

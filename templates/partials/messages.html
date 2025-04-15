@@ -1,77 +1,76 @@
-<style>
+{% if messages %}
+  <style>
     .alert {
-        padding: 15px;
-        margin-bottom: 10px;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        min-width: 250px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 15px;
+      margin-bottom: 10px;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      min-width: 250px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
     
     .alert-success {
-        color: #155724;
-        background-color: #d4edda;
-        border-color: #c3e6cb;
+      color: #155724;
+      background-color: #d4edda;
+      border-color: #c3e6cb;
     }
     
-    .alert-error, .alert-danger {
-        color: #721c24;
-        background-color: #f8d7da;
-        border-color: #f5c6cb;
+    .alert-error,
+    .alert-danger {
+      color: #721c24;
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
     }
     
     .alert-info {
-        color: #0c5460;
-        background-color: #d1ecf1;
-        border-color: #bee5eb;
+      color: #0c5460;
+      background-color: #d1ecf1;
+      border-color: #bee5eb;
     }
     
     .alert-warning {
-        color: #856404;
-        background-color: #fff3cd;
-        border-color: #ffeeba;
+      color: #856404;
+      background-color: #fff3cd;
+      border-color: #ffeeba;
     }
     
     .close {
-        float: right;
-        font-size: 1.5rem;
-        font-weight: 700;
-        line-height: 1;
-        color: #000;
-        text-shadow: 0 1px 0 #fff;
-        opacity: .5;
-        background: transparent;
-        border: 0;
-        cursor: pointer;
+      float: right;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
+      color: #000;
+      text-shadow: 0 1px 0 #fff;
+      opacity: 0.5;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
     }
-</style>
+  </style>
 
-{% if messages %}
-<div id="message-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+  <div id="message-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
     {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="min-width: 250px; margin-bottom: 10px;">
-        {{ message }}
-    </div>
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="min-width: 250px; margin-bottom: 10px;">{{ message }}</div>
     {% endfor %}
-</div>
+  </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-        var messages = document.querySelectorAll('.alert');
-        messages.forEach(function(message) {
-            message.style.transition = 'opacity 0.5s ease-out';
-            message.style.opacity = '0';
-            
-            setTimeout(function() {
-                message.remove();
-                
-                if (document.querySelectorAll('.alert').length === 0) {
-                    document.getElementById('message-container').remove();
-                }
-            }, 500);
-        });
-    }, 4000);
-});
-</script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      setTimeout(function () {
+        var messages = document.querySelectorAll('.alert')
+        messages.forEach(function (message) {
+          message.style.transition = 'opacity 0.5s ease-out'
+          message.style.opacity = '0'
+    
+          setTimeout(function () {
+            message.remove()
+    
+            if (document.querySelectorAll('.alert').length === 0) {
+              document.getElementById('message-container').remove()
+            }
+          }, 500)
+        })
+      }, 4000)
+    })
+  </script>
 {% endif %}

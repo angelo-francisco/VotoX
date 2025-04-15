@@ -1,9 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 
-from .models import Comment, Poll, CategoryChoices, PollOption
+from .forms import PollCreationForm, PollOptionForm
+from .models import Comment, Poll, PollOption
 
 User = get_user_model()
 
@@ -52,11 +55,21 @@ def manage_comments(request, poll_slug):
         elif get_previous_page:
             comments = comments.get_page(int(get_previous_page))
 
+    # just use normal javascript
     if request.method == "POST" and request.user.is_authenticated:
         body = request.POST.get("comment", "").strip()
 
-        if not body:
-            ...
+        if not body and request.headers.get("HX-Request"):
+            messages.error(request, "Type some comment")
+            return JsonResponse(
+                {
+                    "error": "Type some comment",
+                    "messages": [
+                        {"message": msg.message, "tags": msg.tags}
+                        for msg in messages.get_messages(request)
+                    ],
+                }
+            )
         else:
             Comment.objects.create(commented_by=request.user, poll=poll, body=body)
             comments = Paginator(
@@ -69,15 +82,34 @@ def manage_comments(request, poll_slug):
 
 
 def new_poll(request):
-    ctx = {}
-
     if request.method == "POST":
-        cover = request.FILES.get("cover", "")
-        title = request.POST.get("title", "").strip()
-        description = request.POST.get("description", "").strip()
-        category = request.POST.get("category", "").strip()
+        form = PollCreationForm(request.POST, request.FILES)
+        options = PollOptionForm(request.POST)
+        
+        if form.is_valid() and options.is_valid():
+            poll = form.save(commit=False)
+            poll.created_by = request.user
 
+            poll.save()
 
+            options = options.get_options(request.POST)
 
-    ctx["categories"] = CategoryChoices.choices
+            if len(options) < 2:
+                messages.error(request,' You need to have 2 options by default')
+                return redirect(reverse('new_poll'))
+            
+            PollOption.objects.bulk_create(
+                [
+                    PollOption(poll=poll, option=option)
+                    for option in options
+                ]
+            )
+
+            messages.success(request, 'New poll created')
+            return redirect(reverse('new_poll'))
+    else:
+        form = PollCreationForm()
+        options = PollOptionForm()
+
+    ctx = {"options": options, "form": form}
     return render(request, "votes/new_poll.html", ctx)
