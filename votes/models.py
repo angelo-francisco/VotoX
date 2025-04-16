@@ -1,5 +1,8 @@
+from string import ascii_uppercase, digits
+
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils.crypto import get_random_string
 from django.utils.text import slugify
 
 User = get_user_model()
@@ -41,10 +44,15 @@ class Poll(models.Model):
     stars = models.ManyToManyField(User, related_name="stared_polls")
     results_visible = models.BooleanField(default=True, null=True, blank=True)
     was_edited = models.BooleanField(default=False, null=True, blank=True)
+    code = models.CharField(max_length=4, null=True, blank=False, unique=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+
+        if not self.code:
+            self.code = self.generate_unique_poll_code()
+
         super().save(*args, **kwargs)
 
     @property
@@ -58,6 +66,14 @@ class Poll(models.Model):
 
     def __str__(self):
         return self.title
+
+    def generate_unique_poll_code(self):
+        code = get_random_string(4, ascii_uppercase + digits)
+
+        while Poll.objects.filter(code=code).exists():
+            code = get_random_string(4, ascii_uppercase + digits)
+
+        return code
 
 
 class PollOption(models.Model):
