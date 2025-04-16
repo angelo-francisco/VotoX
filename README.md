@@ -1,6 +1,5 @@
 <div align="center" style="margin-bottom: 20px;">
-<img src="static/imgs/logo.png" alt="Votox Logo" width="100px">
-<h3 style="color: #E53935;font-weight: bold;font-size:3rem;line-height:0.1;">votox</h3>
+<h3 style="color: #E53935;font-weight: bold;font-size:3rem;line-height:0.1;margin-bottom: 20px;">votox</h3>
 A Realtime Polling App for fast and simple pollings 
 <hr>
 </div>
@@ -19,4 +18,10 @@ A Realtime Polling App for fast and simple pollings
 </div>
 
 ### What is votox?
+Votox is a web plataform that allow it users to create, edit, delete and share simple polls. Developed by Ângelo Francisco.
+### Architecture 
+### Tech Stack
 ### Features
+### How to run?
+### How to contribute?
+### LICENSE
