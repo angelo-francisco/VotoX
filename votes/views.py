@@ -110,3 +110,7 @@ def new_poll(request):
 
     ctx = {"options": options, "form": form}
     return render(request, "votes/new_poll.html", ctx)
+
+
+def go_poll(request):
+    return render(request, 'votes/go_poll.html')
