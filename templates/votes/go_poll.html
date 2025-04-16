@@ -1,124 +1,142 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="shortcut icon" href="{% static 'imgs/logo.png' %}" type="image/x-icon">
-  <link rel="stylesheet" href="{% static 'css/votes/go_poll.css' %}" />
-  <title>Go Poll | Votox</title>
-</head>
-<body>
-  <div class="animated-background">
-  </div>
-  
-  <header>
-    <button onclick="window.location.href='{% url 'home_page' %}'">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
-        <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
-      </svg>
-    </button>
-    <h1 style="color: var(--primary);">votox</h1>
-    <button>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
-      </svg>
-    </button>
-  </header>
-  
-  <main>
-    <div class="card">
-        <div class="input-group">
-            <span class="hash">#</span>
-            <input type="text" placeholder="Enter poll code">
-            <button class="hash2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
-                </svg>
-            </button>
-        </div>
-    </div>
-  </main>
-  
-  <footer>
-    <a href="">About</a>
-    <a href="">Politics</a>
-    <a href="">Settings</a>
-  </footer>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="{% static 'imgs/logo.png' %}" type="image/x-icon" />
+    <link rel="stylesheet" href="{% static 'css/votes/go_poll.css' %}" />
+    <title>Go Poll | Votox</title>
+  </head>
+  <body>
+    <div class="animated-background"></div>
 
-  <script>
-    // Create animated background elements
-    document.addEventListener('DOMContentLoaded', function() {
-      const background = document.querySelector('.animated-background');
+    <header>
+      <button onclick="window.location.href='{% url 'home_page' %}'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+          <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
+        </svg>
+      </button>
+      <h1 style="color: var(--primary);">votox</h1>
+      <button>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+          <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+        </svg>
+      </button>
+    </header>
+
+    <main>
+      <div class="card">
+        <div class="input-group">
+          <span class="hash">#</span>
+          <input type="text" placeholder="Enter poll code" id="code-input" required />
+          <button class="hash2" id="send-code">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+            </svg>
+          </button>
+        </div>
+        <p class="alert"></p>
+      </div>
+    </main>
+
+    <footer>
+      <a href="">About</a>
+      <a href="">Politics</a>
+      <a href="">Settings</a>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const background = document.querySelector('.animated-background')
       
-      // Create floating dots
-      for (let i = 0; i < 15; i++) {
-        const dot = document.createElement('div');
-        dot.classList.add('animated-dot');
-        
-        // Random size between 5px and 25px
-        const size = Math.floor(Math.random() * 20) + 5;
-        dot.style.width = `${size}px`;
-        dot.style.height = `${size}px`;
-        
-        // Random position
-        dot.style.left = `${Math.random() * 100}%`;
-        dot.style.top = `${Math.random() * 100}%`;
-        
-        // Random animation delay
-        dot.style.animationDelay = `${Math.random() * 5}s`;
-        
-        background.appendChild(dot);
-      }
+        for (let i = 0; i < 15; i++) {
+          const dot = document.createElement('div')
+          dot.classList.add('animated-dot')
       
-      // Create glowing circles
-      for (let i = 0; i < 3; i++) {
-        const glow = document.createElement('div');
-        glow.classList.add('glow');
-        
-        // Random size between 200px and 500px
-        const size = Math.floor(Math.random() * 300) + 200;
-        glow.style.width = `${size}px`;
-        glow.style.height = `${size}px`;
-        
-        // Random position
-        glow.style.left = `${Math.random() * 100}%`;
-        glow.style.top = `${Math.random() * 100}%`;
-        
-        // Random animation delay
-        glow.style.animationDelay = `${Math.random() * 5}s`;
-        
-        background.appendChild(glow);
-      }
+          const size = Math.floor(Math.random() * 20) + 5
+          dot.style.width = `${size}px`
+          dot.style.height = `${size}px`
       
-      // Create grid lines
-      for (let i = 0; i < 10; i++) {
-        const gridLine = document.createElement('div');
-        gridLine.classList.add('grid-line');
-        
-        // Position
-        gridLine.style.top = `${i * 10}%`;
-        
-        // Random animation delay
-        gridLine.style.animationDelay = `${Math.random() * 5}s`;
-        
-        background.appendChild(gridLine);
-      }
+          dot.style.left = `${Math.random() * 100}%`
+          dot.style.top = `${Math.random() * 100}%`
       
-      // Create vertical grid lines
-      for (let i = 0; i < 10; i++) {
-        const gridLine = document.createElement('div');
-        gridLine.classList.add('grid-line-vertical');
-        
-        // Position
-        gridLine.style.left = `${i * 10}%`;
-        
-        // Random animation delay
-        gridLine.style.animationDelay = `${Math.random() * 5}s`;
-        
-        background.appendChild(gridLine);
-      }
-    });
-  </script>
-</body>
+          dot.style.animationDelay = `${Math.random() * 5}s`
+      
+          background.appendChild(dot)
+        }
+      
+        for (let i = 0; i < 3; i++) {
+          const glow = document.createElement('div')
+          glow.classList.add('glow')
+      
+          const size = Math.floor(Math.random() * 300) + 200
+          glow.style.width = `${size}px`
+          glow.style.height = `${size}px`
+      
+          glow.style.left = `${Math.random() * 100}%`
+          glow.style.top = `${Math.random() * 100}%`
+      
+          glow.style.animationDelay = `${Math.random() * 5}s`
+      
+          background.appendChild(glow)
+        }
+      
+        for (let i = 0; i < 10; i++) {
+          const gridLine = document.createElement('div')
+          gridLine.classList.add('grid-line')
+      
+          gridLine.style.top = `${i * 10}%`
+      
+          gridLine.style.animationDelay = `${Math.random() * 5}s`
+      
+          background.appendChild(gridLine)
+        }
+      
+        for (let i = 0; i < 10; i++) {
+          const gridLine = document.createElement('div')
+          gridLine.classList.add('grid-line-vertical')
+      
+          gridLine.style.left = `${i * 10}%`
+      
+          gridLine.style.animationDelay = `${Math.random() * 5}s`
+      
+          background.appendChild(gridLine)
+        }
+      })
+      
+      const codeBtn = document.querySelector('#send-code')
+      const message = document.querySelector('.alert')
+      const codeInput = document.querySelector('#code-input')
+      const codeBtnContent = codeBtn.innerHTML
+      
+      codeBtn.addEventListener('click', async () => {
+        codeBtn.innerHTML = '<div class="loader"></div>'
+      
+        if (!codeInput.value) {
+          message.classList.add('error')
+          message.textContent = 'Please, fill the code input.'
+      
+          codeBtn.innerHTML = codeBtnContent
+        }
+      
+        const response = await fetch(`{% url 'go_poll' %}?code=${codeInput.value}`)
+        const data = await response.json()
+      
+        if (response.ok) {
+          message.classList.add('success')
+          message.textContent = data.msg
+            
+          // redirect to poll room
+          // window.location.href = ''
+          
+        } else {
+          message.classList.add('error')
+          message.textContent = data.msg
+      
+          codeBtn.innerHTML = codeBtnContent
+        }
+      })
+    </script>
+  </body>
 </html>

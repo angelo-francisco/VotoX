@@ -243,21 +243,13 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 0.3s ease;
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .hash2 svg {
     color: white;
     width: 18px;
     height: 18px;
-}
-
-.hash2:hover {
-    background-color: white;
-}
-
-.hash2:hover svg {
-    color: var(--primary);
 }
 
 input[type="text"] {
@@ -296,4 +288,35 @@ footer a {
 
 footer a:hover {
     color: var(--primary);
+}
+
+.alert {
+    display: none;
+    text-align: center;
+}
+
+.error {
+    color: var(--primary);
+    display: inline;
+}
+
+.success {
+    color: rgb(35, 237, 8);
+    display: inline;
+}
+
+.loader {
+    width: 20px;
+    height: 20px;
+    border: 3px solid white;
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin: 10px auto;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
