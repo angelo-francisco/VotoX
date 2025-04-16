@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 from django.contrib import messages
 from django.contrib.auth import (
     authenticate,
@@ -9,15 +11,14 @@ from django.contrib.auth import (
 from django.contrib.auth import (
     logout as django_logout,
 )
-from urllib.parse import quote
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from .models import VerificationCode
 from .tasks import custom_send_email
@@ -58,12 +59,13 @@ def login(request):
 
     return render(request, "accounts/login.html")
 
+
 def verify_code(request):
     purpose = request.GET.get("purpose", "").strip()
 
     if not purpose:
-        messages.error(request, 'Nothing to verify')
-        return redirect(reverse('home_page'))
+        messages.error(request, "Nothing to verify")
+        return redirect(reverse("home_page"))
 
     if purpose == "VA":
         action = request.GET.get("action", "")
@@ -84,9 +86,9 @@ def verify_code(request):
                 template="emails/verify_account.html",
                 recipient_list=[email],
                 context={
-                    'verification_code': verification_code.code,
-                    'username':username
-                }
+                    "verification_code": verification_code.code,
+                    "username": username,
+                },
             )
 
             messages.success(request, "New code was sent.")
@@ -112,7 +114,7 @@ def verify_code(request):
 
             if not code:
                 messages.error(request, "Please, write the code.")
-                return redirect(reverse("verify_code") + "?purpose="+purpose)
+                return redirect(reverse("verify_code") + "?purpose=" + purpose)
 
             verification_code = VerificationCode.objects.filter(
                 email=email, is_used=False
@@ -136,8 +138,8 @@ def verify_code(request):
                     reverse("signup") + "?step=profile-photo&user=" + username
                 )
             messages.error(request, "Invalid or expired code.")
-            return redirect(reverse("verify_code") + "?purpose="+purpose)
-    return render(request, "accounts/verify_account.html", {'purpose': purpose})
+            return redirect(reverse("verify_code") + "?purpose=" + purpose)
+    return render(request, "accounts/verify_account.html", {"purpose": purpose})
 
 
 @cant_be_authenticated
@@ -218,19 +220,14 @@ def signup(request):
 
         code = VerificationCode.generate_code()
         verification_code = VerificationCode.objects.create(
-            email=email, 
-            code=code,
-            purpose="VA"
+            email=email, code=code, purpose="VA"
         )
 
         custom_send_email.delay(
             subject="Verifique a sua conta | Votox",
             template="emails/verify_account.html",
             recipient_list=[email],
-            context={
-                'verification_code': verification_code.code,
-                'username': username
-            }
+            context={"verification_code": verification_code.code, "username": username},
         )
 
         messages.success(request, "We sent an email to you.")
@@ -244,7 +241,8 @@ def logout(request):
         django_logout(request)
         messages.success(request, "You were logout.")
         return redirect(reverse("login"))
-    return render(request, 'accounts/logout.html')
+    return render(request, "accounts/logout.html")
+
 
 @cant_be_authenticated
 def forgot_password(request):
@@ -253,20 +251,26 @@ def forgot_password(request):
     if request.method == "POST":
         email = request.POST.get("email", "").strip()
         if not email:
-            messages.error(request, 'Please, fill the input.')
-            return redirect(reverse('forgot_password'))
-        
+            messages.error(request, "Please, fill the input.")
+            return redirect(reverse("forgot_password"))
+
         user = User.objects.filter(email__iexact=email).first()
 
         if not user:
-            messages.error(request, 'This email is not registrated, redirecting to signup.')
-            return redirect(reverse('forgot_password')+'?redirect='+quote(reverse('signup')))
+            messages.error(
+                request, "This email is not registrated, redirecting to signup."
+            )
+            return redirect(
+                reverse("forgot_password") + "?redirect=" + quote(reverse("signup"))
+            )
 
         try:
             token = TokenManager.make_token(user)
             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
 
-            link = request.build_absolute_uri(reverse('reset_password', args=[uidb64, token]))
+            link = request.build_absolute_uri(
+                reverse("reset_password", args=[uidb64, token])
+            )
 
             custom_send_email.delay(
                 subject="Reset Password | Votox",
@@ -275,24 +279,23 @@ def forgot_password(request):
                 context={
                     "link": link,
                     "username": user.username,
-                }
+                },
             )
 
-            messages.success(request, 'Reset password link was sent')
-            return redirect(reverse('login'))
+            messages.success(request, "Reset password link was sent")
+            return redirect(reverse("login"))
         except Exception as e:
             print(e)
-            messages.error(request, 'Error. Try it later, redirecting to signup.')
-            return redirect(reverse('forgot_password')+'?redirect='+quote(reverse('login')))
-    return render(request, 'accounts/forgot_password.html', ctx)
+            messages.error(request, "Error. Try it later, redirecting to signup.")
+            return redirect(
+                reverse("forgot_password") + "?redirect=" + quote(reverse("login"))
+            )
+    return render(request, "accounts/forgot_password.html", ctx)
 
 
 @cant_be_authenticated
 def reset_password(request, uidb64, token):
-    ctx = {
-        'uidb64':uidb64,
-        'token': token
-    }
+    ctx = {"uidb64": uidb64, "token": token}
 
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
@@ -300,26 +303,26 @@ def reset_password(request, uidb64, token):
 
         if not TokenManager.check_token(user, token):
             raise ValueError
-        
-    except (TypeError, OverflowError, ValueError,user.DoesNotExist):
-        messages.error(request, 'Invalid link. Try again later.')
-        return redirect(reverse('login'))
+
+    except (TypeError, OverflowError, ValueError, user.DoesNotExist):
+        messages.error(request, "Invalid link. Try again later.")
+        return redirect(reverse("login"))
 
     if request.method == "POST":
         new_password = request.POST.get("password", "").strip()
-        confirm_password =request.POST.get("password2", "").strip()
+        confirm_password = request.POST.get("password2", "").strip()
 
         if not all([new_password, confirm_password]):
-            messages.error(request, 'Please, fill the inputs')
-            return redirect(reverse('reset_password', args=[uidb64, token]))
+            messages.error(request, "Please, fill the inputs")
+            return redirect(reverse("reset_password", args=[uidb64, token]))
 
         if new_password != confirm_password:
-            messages.error(request, 'Diferent passwords.')
-            return redirect(reverse('reset_password', args=[uidb64, token]))
-        
+            messages.error(request, "Diferent passwords.")
+            return redirect(reverse("reset_password", args=[uidb64, token]))
+
         user.set_password(new_password)
         user.save()
 
-        messages.success(request, 'Password reseted.')
-        return redirect(reverse('login'))
-    return render(request, 'accounts/reset_password.html', ctx)
+        messages.success(request, "Password reseted.")
+        return redirect(reverse("login"))
+    return render(request, "accounts/reset_password.html", ctx)
