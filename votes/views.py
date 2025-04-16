@@ -85,7 +85,7 @@ def new_poll(request):
     if request.method == "POST":
         form = PollCreationForm(request.POST, request.FILES)
         options = PollOptionForm(request.POST)
-        
+
         if form.is_valid() and options.is_valid():
             poll = form.save(commit=False)
             poll.created_by = request.user
@@ -95,18 +95,15 @@ def new_poll(request):
             options = options.get_options(request.POST)
 
             if len(options) < 2:
-                messages.error(request,' You need to have 2 options by default')
-                return redirect(reverse('new_poll'))
-            
+                messages.error(request, " You need to have 2 options by default")
+                return redirect(reverse("new_poll"))
+
             PollOption.objects.bulk_create(
-                [
-                    PollOption(poll=poll, option=option)
-                    for option in options
-                ]
+                [PollOption(poll=poll, option=option) for option in options]
             )
 
-            messages.success(request, 'New poll created')
-            return redirect(reverse('new_poll'))
+            messages.success(request, "New poll created")
+            return redirect(reverse("new_poll"))
     else:
         form = PollCreationForm()
         options = PollOptionForm()
