@@ -10,6 +10,7 @@ Home Page
 {% endblock %}
 
 {% block content %}
+{% include 'partials/messages.html' %}
 <main>
     <section class="welcome">
         <div class="join-poll">
@@ -35,9 +36,7 @@ Home Page
                 <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
             </button>
             {% else %}
-            {% comment %}
-            change the link
-            {% endcomment %}
+
             <button class="btn-start" onclick="window.location.href='{% if not request.user.is_authenticated %}{% url 'login' %}?next=/new-poll/{% else %}{% url 'new_poll' %}{% endif %}'">
                 Create a Poll
                 <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
