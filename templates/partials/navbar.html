@@ -28,7 +28,13 @@
         {% else %}
         <div class="dropdown">
             <div class="user-image" id="userDropdown">
+              
+              {% if request.user.profile_photo %}
+              <img src="{{ request.user.profile_photo.url }}" class="profile-img" alt="User Profile Photo">
+              {% else %}
               {{ request.user.username|slice:"2"|upper }}
+              {% endif %}
+                
             </div>
             <div class="dropdown-menu" id="dropdownMenu">
                 <div id="resp-item">
