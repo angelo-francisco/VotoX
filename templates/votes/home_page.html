@@ -38,7 +38,7 @@ Home Page
             {% comment %}
             change the link
             {% endcomment %}
-            <button class="btn-start" onclick="window.location.href='{% url 'login' %}'">
+            <button class="btn-start" onclick="window.location.href='{% if not request.user.is_authenticated %}{% url 'login' %}?next=/new-poll/{% else %}{% url 'new_poll' %}{% endif %}'">
                 Create a Poll
                 <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
             </button>
