@@ -12,3 +12,7 @@ body {
     align-content: center;
     align-items: center;
 }
+
+*::selection {
+    background-color: rgba(229, 57, 53, 0.2);
+}
