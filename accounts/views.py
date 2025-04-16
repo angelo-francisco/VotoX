@@ -240,10 +240,11 @@ def signup(request):
 
 @login_required
 def logout(request):
-    django_logout(request)
-
-    messages.success(request, "You were logout.")
-    return redirect(reverse("login"))
+    if request.method == "POST":
+        django_logout(request)
+        messages.success(request, "You were logout.")
+        return redirect(reverse("login"))
+    return render(request, 'accounts/logout.html')
 
 @cant_be_authenticated
 def forgot_password(request):
