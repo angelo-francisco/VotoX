@@ -18,8 +18,9 @@
 }
 
 *::selection {
-    background-color: rgba(229, 57, 53, 0.2);
+    background-color: #00000018;
 }
+
 
 body {
     min-height: 100dvh;

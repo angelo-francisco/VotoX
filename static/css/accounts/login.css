@@ -15,10 +15,6 @@
     font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
-*::selection {
-    background-color: #00000018;
-}
-
 *:focus {
     outline: none;
 }
