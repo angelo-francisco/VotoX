@@ -41,7 +41,7 @@ class Poll(models.Model):
     slug = models.SlugField(null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     views = models.PositiveIntegerField(default=0, null=True, blank=True)
-    stars = models.ManyToManyField(User, related_name="stared_polls", null=True, blank=True)
+    stars = models.ManyToManyField(User, related_name="stared_polls", blank=True)
     results_visible = models.BooleanField(default=True, null=True, blank=True)
     was_edited = models.BooleanField(default=False, null=True, blank=True)
     code = models.CharField(max_length=4, null=True, blank=False)
