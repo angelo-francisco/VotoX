@@ -1,0 +1,67 @@
+{% extends 'layouts/accounts.html' %}
+
+{% load socialaccount %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/accounts/login.css' %}" />
+
+  <style>
+    .login-button {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 0.5rem;
+    }
+    
+    .login-button:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .skip-button {
+      background-color: #ccc;
+      color: #333;
+      text-align: center;
+      text-decoration: none;
+    }
+    
+    .skip-button:hover {
+      background-color: rgb(232, 232, 232);
+    }
+    
+    form {
+      display: flex;
+      gap: 10px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {% include 'partials/messages.html' %}
+
+  <div class="login-container">
+    <div class="login-header">
+      <h1 class="login-title">Logout Page</h1>
+      <p class="login-subtitle" style="color: #333;">Are you sure about logout your session?</p>
+    </div>
+
+    <form action="{% url 'logout' %}" method="POST" id="logout-form">
+      {% csrf_token %}
+      <a href="#" onclick="window.history.go(-1)" class="login-button skip-button">Cancel</a>
+      <button class="login-button" id="logout-button">Logout</button>
+    </form>
+  </div>
+{% endblock %}
