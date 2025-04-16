@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.crypto import get_random_string
 from django.utils.text import slugify
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -38,13 +39,13 @@ class Poll(models.Model):
     end_at = models.DateTimeField(null=True, blank=True)
     max_votes = models.PositiveIntegerField(null=True, blank=True)
     is_anonymous = models.BooleanField(default=False, null=True, blank=True)
-    slug = models.SlugField(null=True, blank=True)
+    slug = models.SlugField(max_length=80, null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     views = models.PositiveIntegerField(default=0, null=True, blank=True)
     stars = models.ManyToManyField(User, related_name="stared_polls", blank=True)
     results_visible = models.BooleanField(default=True, null=True, blank=True)
     was_edited = models.BooleanField(default=False, null=True, blank=True)
-    code = models.CharField(max_length=4, null=True, blank=False)
+    code = models.CharField(max_length=4, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -56,7 +57,9 @@ class Poll(models.Model):
         super().save(*args, **kwargs)
 
     @property
-    def is_active(self): ...
+    def is_active(self):
+        return self.end_at is None or self.end_at > timezone.now()
+
 
     @property
     def get_stars(self): ...
