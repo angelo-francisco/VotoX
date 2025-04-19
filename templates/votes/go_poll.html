@@ -127,8 +127,7 @@
           message.classList.add('success')
           message.textContent = data.msg
             
-          // redirect to poll room
-          // window.location.href = ''
+          window.location.href = window.location.origin + '/' + data.code
           
         } else {
           message.classList.add('error')
