@@ -117,7 +117,7 @@ def go_poll(request):
 
     if code:
         poll = Poll.objects.filter(code=code).first()
-        print(poll.is_active)
+        
         if poll and poll.is_active:
             return JsonResponse({'msg': 'Redirecting to the poll room...', 'slug': poll.slug})
         return JsonResponse({'msg': 'Invalid or ended poll'}, status=400)
