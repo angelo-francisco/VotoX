@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render, get_list_or_404
 from django.urls import reverse
 
 from .forms import PollCreationForm, PollOptionForm
@@ -127,4 +127,8 @@ def go_poll(request):
 
 def answer_poll(request, code):
     poll = get_object_or_404(Poll, code=code)
-    return render(request, 'votes/answer_poll.html')
+    options = get_list_or_404(PollOption, poll=poll)
+    
+    ctx = {'poll': poll, 'options': options}
+
+    return render(request, 'votes/answer_poll.html', ctx)

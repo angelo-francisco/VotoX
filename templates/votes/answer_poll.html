@@ -1,0 +1,101 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="{% static 'imgs/logo.png' %}" type="image/x-icon" />
+    <meta name="description" content="A Realtime Polling App for fast and simple pollings" />
+    <meta name="author" content="Ângelo Amândio Alcochete Francisco" />
+    <link rel="stylesheet" href="{% static 'css/layout/layout.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/votes/answer_poll.css' %}" />
+    <title>Answer Poll | Votox</title>
+  </head>
+  <body>
+    <div class="poll-card">
+      <div class="card-header">
+        <div class="logo">votox</div>
+        <button class="close-btn" onclick="window.location.href='{% url 'pollings' %}'">×</button>
+      </div>
+
+      <div class="tab-menu">
+        <button class="tab-btn" onclick="openTab('comment')">Comment</button>
+        <button class="tab-btn active" onclick="openTab('answer')">Answer</button>
+      </div>
+
+      <div class="tab-content">
+        <div id="comment" class="tab-pane">
+          <div class="comment-section">
+            <div class="comments-list">
+              <div class="comment">
+                <div class="comment-header">
+                  <span class="user-name">John Doe</span>
+                  <span class="comment-time">5m ago</span>
+                </div>
+                <p class="comment-text">Is this poll going to be open for long? I'd like to share it with my team.</p>
+              </div>
+            
+              <div class="comment">
+                <div class="comment-header">
+                  <span class="user-name">Emily Sanders</span>
+                  <span class="comment-time">10m ago</span>
+                </div>
+                <p class="comment-text">Great options! Is there any way to add a custom response?</p>
+              </div>
+            </div>
+
+            <div class="comment-form">
+              <textarea class="comment-input" placeholder="Add a comment or question..."></textarea>
+              <button class="submit-comment">Send</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="answer" class="tab-pane active">
+          <h3 class="poll-question">{{ poll.title }}</h3>
+
+          <div class="poll-options">
+            {% for option in options %}
+              <div class="poll-option" onclick="selectOption(this)">
+                <span class="option-text">JavaScript</span>
+                <span class="option-percentage">42%</span>
+              </div>
+            {% endfor %}
+          </div>
+
+          <button class="submit-vote">Submit Vote</button>
+
+          <div class="poll-meta">Total votes: 158 • Poll ends in 2 days</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function openTab(tabName) {
+        var tabcontent = document.getElementsByClassName('tab-pane')
+        for (var i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].classList.remove('active')
+        }
+      
+        var tablinks = document.getElementsByClassName('tab-btn')
+        for (var i = 0; i < tablinks.length; i++) {
+          tablinks[i].classList.remove('active')
+        }
+      
+        document.getElementById(tabName).classList.add('active')
+      
+        event.currentTarget.classList.add('active')
+      }
+      
+      function selectOption(element) {
+        var options = document.getElementsByClassName('poll-option')
+        for (var i = 0; i < options.length; i++) {
+          options[i].classList.remove('selected')
+        }
+      
+        element.classList.add('selected')
+      }
+    </script>
+  </body>
+</html>
