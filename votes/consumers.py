@@ -1,0 +1,6 @@
+from channels.generic.websocket import AsyncWebsocketConsumer
+
+class VoteConsumer(AsyncWebsocketConsumer):
+    async def connect(self): ...
+    async def disconnect(self, code): ...
+    
