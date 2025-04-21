@@ -35,7 +35,7 @@
                 </div>
                 <p class="comment-text">Is this poll going to be open for long? I'd like to share it with my team.</p>
               </div>
-            
+
               <div class="comment">
                 <div class="comment-header">
                   <span class="user-name">Emily Sanders</span>
@@ -56,46 +56,34 @@
           <h3 class="poll-question">{{ poll.title }}</h3>
 
           <div class="poll-options">
-            {% for option in options %}
-              <div class="poll-option" onclick="selectOption(this)">
-                <span class="option-text">{{ option.option }}</span>
-                <span class="option-percentage">42%</span>
-              </div>
-            {% endfor %}
+            <div class="poll-options">
+              {% for option in options %}
+                <div class="poll-option" onclick="selectOption(this)" data-option-id="{{ option.id }}">
+                  <span class="option-text">{{ option.option }}</span>
+                  <span class="option-percentage" id="percentage-{{ option.id }}">0%</span>
+                  <div class="progress-bar">
+                    <div class="progress" id="progress-{{ option.id }}" style="width: 10%"></div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
           </div>
 
           <button class="submit-vote">Submit Vote</button>
-
-          <div class="poll-meta">Total votes: 158 {% if poll.end_at %}• Poll ends in 2 days {% endif %}</div>
+          <div class="poll-meta">
+            <span id="total-votes">Total votes: 0</span>
+            <span id="active-users">• <span id="js-voting-user-count">0</span> person voting</span>
+            {% if poll.end_at %}
+              • <span id="countdown">Poll ends in <span id="time-remaining">loading...</span></span>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
 
     <script>
-      function openTab(tabName) {
-        var tabcontent = document.getElementsByClassName('tab-pane')
-        for (var i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].classList.remove('active')
-        }
-      
-        var tablinks = document.getElementsByClassName('tab-btn')
-        for (var i = 0; i < tablinks.length; i++) {
-          tablinks[i].classList.remove('active')
-        }
-      
-        document.getElementById(tabName).classList.add('active')
-      
-        event.currentTarget.classList.add('active')
-      }
-      
-      function selectOption(element) {
-        var options = document.getElementsByClassName('poll-option')
-        for (var i = 0; i < options.length; i++) {
-          options[i].classList.remove('selected')
-        }
-      
-        element.classList.add('selected')
-      }
+      const pollCode = '{{ poll.code }}'
     </script>
+    <script src="{% static 'js/votes/answer_poll.js' %}"></script>
   </body>
 </html>

@@ -47,10 +47,6 @@ body {
     padding-right: 30px;
 }
 
-.option-percentage {
-    display: none;
-}
-
 .logo {
     color: var(--primary);
     font-weight: 700;
@@ -268,4 +264,59 @@ body {
     font-size: 0.85rem;
     color: var(--text-light);
     text-align: center;
+}
+
+.progress-bar {
+    height: 4px;
+    background-color: var(--gray-bg);
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background-color: var(--primary);
+    transition: width 0.5s ease;
+}
+
+.typing-indicator {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    padding: 5px;
+    font-style: italic;
+}
+
+/* Animação para novos comentários */
+@keyframes highlightNew {
+    0% {
+        background-color: var(--primary-bg);
+    }
+
+    100% {
+        background-color: var(--gray-bg);
+    }
+}
+
+.comment-new {
+    animation: highlightNew 2s ease;
+}
+
+/* Animação para atualizações de votos */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.option-updated {
+    animation: pulse 0.5s ease;
 }
