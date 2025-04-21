@@ -4,5 +4,5 @@ from .consumers import VoteConsumer
 
 
 websocket_url_patterns = [
-    path('votes/', VoteConsumer.as_asgi())
+    path('vote/<code>/', VoteConsumer.as_asgi())
 ]
