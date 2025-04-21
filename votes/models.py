@@ -46,7 +46,7 @@ class Poll(models.Model):
     results_visible = models.BooleanField(default=True, null=True, blank=True)
     was_edited = models.BooleanField(default=False, null=True, blank=True)
     code = models.CharField(max_length=4, null=True, blank=True)
-    voting_users_count = models.PositiveIntegerField(default=0, null=True, blank=True)
+    voting_users_count = models.ManyToManyField(User, related_name="online_polls", blank=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
