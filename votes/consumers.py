@@ -35,11 +35,11 @@ class VoteConsumer(AsyncWebsocketConsumer):
         )
 
     async def user_update(self, event):
-        if event["add"]:
+        if event.get("add", None):
             updated_voting_users_count = await self.update_voting_users_count(
                 add=True
             )
-        elif event["remove"]:
+        elif event.get("remove", None):
             updated_voting_users_count = await self.update_voting_users_count(
                 remove=True
             )
