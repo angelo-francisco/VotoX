@@ -36,6 +36,5 @@ ws.onmessage = (event) => {
         const userCountSpan = document.querySelector('#js-voting-user-count')
 
         userCountSpan.innerText = data.updated_voting_users_count
-
     }
 }
