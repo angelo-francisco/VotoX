@@ -32,9 +32,8 @@ ws.onopen = (event) => {
 ws.onmessage = (event) => {
     const data = JSON.parse(event.data)
 
-    if ((data.type) == 'user_update') {
+    if (data.type == 'user_update') {
         const userCountSpan = document.querySelector('#js-voting-user-count')
-        const userCount = parseInt(userCountSpan.textContent)
 
         userCountSpan.innerText = data.updated_voting_users_count
 
