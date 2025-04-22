@@ -58,18 +58,18 @@
           <div class="poll-options">
             <div class="poll-options">
               {% for option in options %}
-                <div class="poll-option" onclick="selectOption(this)" data-option-id="{{ option.id }}">
+                <div class="poll-option" onclick="selectOption(this)" data-option-id="{{ option.id }}" id="option-{{ option.id }}">
                   <span class="option-text">{{ option.option }}</span>
                   <span class="option-percentage" id="percentage-{{ option.id }}">0%</span>
                   <div class="progress-bar">
-                    <div class="progress" id="progress-{{ option.id }}" style="width: 10%"></div>
+                    <div class="progress" id="progress-{{ option.id }}" style="width: 0%"></div>
                   </div>
                 </div>
               {% endfor %}
             </div>
           </div>
 
-          <button class="submit-vote">Submit Vote</button>
+          <button class="submit-vote" id="submit-vote-{{request.user.id}}">Submit Vote</button>
           <div class="poll-meta">
             <span id="total-votes">Total votes: 0</span>
             <span id="active-users">• <span id="js-voting-user-count">0</span> person voting</span>
@@ -83,6 +83,7 @@
 
     <script>
       const pollCode = '{{ poll.code }}'
+      const userId = '{{ request.user.id }}'
     </script>
     <script src="{% static 'js/votes/answer_poll.js' %}"></script>
   </body>

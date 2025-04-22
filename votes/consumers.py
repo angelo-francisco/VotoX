@@ -7,71 +7,8 @@ from .models import Poll
 
 
 class VoteConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        code = self.scope["url_route"]["kwargs"]["code"]
-        poll = await self.aget_object_or_None(code)
-        self.user = self.scope.get("user", None)
+    async def connect(self): ...
 
-        if self.user and self.user.is_authenticated and poll:
-            self.poll = poll
-            self.room = f"poll-{code}"
+    async def disconnect(self, close_code): ...
 
-            await self.accept()
-
-            await self.channel_layer.group_add(self.room, self.channel_name)
-
-        else:
-            await self.close()
-
-    async def disconnect(self, code):
-        await self.channel_layer.group_discard(self.room, self.channel_name)
-        
-        await self.channel_layer.group_send(
-            self.room,
-            {"type": "user_update", "connecting": False},
-        )
-
-    async def receive(self, text_data):
-        data = json.loads(text_data)
-        event_type = data.get("type")
-
-        if event_type == "user_update":
-            await self.channel_layer.group_send(
-                self.room,
-                {"type": "user_update"},
-            )
-
-    async def user_update(self, event):
-        voting_users_count = await self.update_voting_users_count(
-            event.get("connecting", True)
-        )
-
-        await self.send(
-            text_data=json.dumps(
-                {
-                    "updated_voting_users_count": voting_users_count,
-                    "type": "user_update",
-                }
-            )
-        )
-
-    @database_sync_to_async
-    def update_voting_users_count(self, connecting=True):
-        is_user_on_the_poll = (
-            True if self.poll.voting_users.filter(id=self.user.id).exists() else False
-        )
-
-        if not connecting and is_user_on_the_poll:
-            self.poll.voting_users.remove(self.user)
-
-        elif not is_user_on_the_poll and connecting:
-            self.poll.voting_users.add(self.user)
-
-        return self.poll.voting_users.count()
-
-    @database_sync_to_async
-    def aget_object_or_None(self, code):
-        try:
-            return Poll.objects.get(code=code)
-        except Poll.DoesNotExist:
-            return
+    async def receive(self, text_data): ...
