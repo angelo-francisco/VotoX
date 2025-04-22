@@ -20,20 +20,26 @@ class VoteConsumer(AsyncWebsocketConsumer):
 
             await self.channel_layer.group_add(self.room, self.channel_name)
 
-            await self.channel_layer.group_send(
-                self.room,
-                {"type": "user_update"},
-            )
         else:
             await self.close()
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(self.room, self.channel_name)
-
+        
         await self.channel_layer.group_send(
             self.room,
             {"type": "user_update", "connecting": False},
         )
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        event_type = data.get("type")
+
+        if event_type == "user_update":
+            await self.channel_layer.group_send(
+                self.room,
+                {"type": "user_update"},
+            )
 
     async def user_update(self, event):
         voting_users_count = await self.update_voting_users_count(
@@ -57,10 +63,10 @@ class VoteConsumer(AsyncWebsocketConsumer):
 
         if not connecting and is_user_on_the_poll:
             self.poll.voting_users.remove(self.user)
-            
+
         elif not is_user_on_the_poll and connecting:
             self.poll.voting_users.add(self.user)
-            
+
         return self.poll.voting_users.count()
 
     @database_sync_to_async

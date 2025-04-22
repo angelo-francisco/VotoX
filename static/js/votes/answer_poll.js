@@ -1,40 +1,40 @@
-function openTab(tabName) {
-    var tabcontent = document.getElementsByClassName('tab-pane')
-    for (var i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].classList.remove('active')
+    function openTab(tabName) {
+        var tabcontent = document.getElementsByClassName('tab-pane')
+        for (var i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove('active')
+        }
+
+        var tablinks = document.getElementsByClassName('tab-btn')
+        for (var i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove('active')
+        }
+
+        document.getElementById(tabName).classList.add('active')
+
+        event.currentTarget.classList.add('active')
     }
 
-    var tablinks = document.getElementsByClassName('tab-btn')
-    for (var i = 0; i < tablinks.length; i++) {
-        tablinks[i].classList.remove('active')
+    function selectOption(element) {
+        var options = document.getElementsByClassName('poll-option')
+        for (var i = 0; i < options.length; i++) {
+            options[i].classList.remove('selected')
+        }
+
+        element.classList.add('selected')
     }
 
-    document.getElementById(tabName).classList.add('active')
+    const ws = new WebSocket(`ws://${window.location.host}/vote/${pollCode}/`)
 
-    event.currentTarget.classList.add('active')
-}
-
-function selectOption(element) {
-    var options = document.getElementsByClassName('poll-option')
-    for (var i = 0; i < options.length; i++) {
-        options[i].classList.remove('selected')
+    ws.onopen = event  => {
+        ws.send(JSON.stringify({ type: 'user_update'}));
     }
 
-    element.classList.add('selected')
-}
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data)
 
-const ws = new WebSocket(`ws://${window.location.host}/vote/${pollCode}/`)
+        if (data.type == 'user_update') {
+            const userCountSpan = document.querySelector('#js-voting-user-count')
 
-ws.onopen = (event) => {
-    console.log("Connected")
-}
-
-ws.onmessage = (event) => {
-    const data = JSON.parse(event.data)
-
-    if (data.type == 'user_update') {
-        const userCountSpan = document.querySelector('#js-voting-user-count')
-
-        userCountSpan.innerText = data.updated_voting_users_count
+            userCountSpan.innerText = data.updated_voting_users_count
+        }
     }
-}
