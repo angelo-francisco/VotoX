@@ -16,7 +16,7 @@
     <div class="poll-card">
       <div class="card-header">
         <div class="logo">votox</div>
-        <button class="close-btn" onclick="window.location.href='{% url 'pollings' %}'">×</button>
+        <button class="close-btn" onclick="window.location.href='{% url 'poll_detail' poll.created_by.username poll.slug %}'">×</button>
       </div>
 
       <div class="tab-menu">
