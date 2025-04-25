@@ -10,6 +10,7 @@ from .repository import (
     check_user,
     get_poll,
     get_poll_options_statistics,
+    get_total_votes,
     vote_on_poll_option,
 )
 
@@ -36,9 +37,7 @@ class VoteConsumer(AsyncWebsocketConsumer):
 
         await self.broadcast_user_count()
 
-        await self.channel_layer.group_send(
-            self.room, {"type": "polls.update"}
-        )
+        await self.channel_layer.group_send(self.room, {"type": "polls.update"})
 
     async def disconnect(self, close_code):
         await self.mark_offline()
@@ -60,19 +59,18 @@ class VoteConsumer(AsyncWebsocketConsumer):
     async def vote_in_poll(self, option_id):
         await vote_on_poll_option(self.poll, option_id, self.user)
 
-        await self.channel_layer.group_send(
-            self.room, {"type": "polls.update"}
-        )
+        await self.channel_layer.group_send(self.room, {"type": "polls.update"})
 
     async def polls_update(self, event):
         optionsData = await get_poll_options_statistics(self.poll)
+        total_votes = await get_total_votes(self.poll)
 
         await self.send(
             text_data=json.dumps(
                 {
                     "type": "voting",
                     "optionsData": optionsData,
-                    "userId": self.user.id,
+                    "total_votes": total_votes,
                 }
             )
         )
