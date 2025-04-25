@@ -2,15 +2,14 @@ import json
 
 from channels.exceptions import DenyConnection, StopConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
-from redis import asyncio as aioredis
-
 from django.conf import settings
+from redis import asyncio as aioredis
 
 from .repository import (
     check_poll,
     check_user,
     get_poll,
-    get_option_percentage,
+    get_poll_options_statistics,
     vote_on_poll_option,
 )
 
@@ -37,6 +36,10 @@ class VoteConsumer(AsyncWebsocketConsumer):
 
         await self.broadcast_user_count()
 
+        await self.channel_layer.group_send(
+            self.room, {"type": "polls.update"}
+        )
+
     async def disconnect(self, close_code):
         await self.mark_offline()
         await self.broadcast_user_count()
@@ -55,22 +58,20 @@ class VoteConsumer(AsyncWebsocketConsumer):
                     await self.vote_in_poll(int(option_id))
 
     async def vote_in_poll(self, option_id):
-        option = await vote_on_poll_option(self.poll, option_id, self.user)
+        await vote_on_poll_option(self.poll, option_id, self.user)
 
-        if option:
-            await self.channel_layer.group_send(
-                self.room, {"type": "poll.update", "option_id": option.id}
-            )
+        await self.channel_layer.group_send(
+            self.room, {"type": "polls.update"}
+        )
 
-    async def poll_update(self, event):
-        percentage = await get_option_percentage(self.poll, event["option_id"])
+    async def polls_update(self, event):
+        optionsData = await get_poll_options_statistics(self.poll)
 
         await self.send(
             text_data=json.dumps(
                 {
                     "type": "voting",
-                    "optionId": event["option_id"],
-                    "percentage": percentage,
+                    "optionsData": optionsData,
                     "userId": self.user.id,
                 }
             )
