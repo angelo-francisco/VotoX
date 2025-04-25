@@ -35,10 +35,6 @@ ws.onmessage = event => {
 
     const data = JSON.parse(event.data)
 
-    if (data.type === "user_status" && data.status === "online") {
-        console.log(`Usuário ${data.user_id} está online`)
-    }
-
     if (data.type === "user_count") {
         document.getElementById("js-voting-user-count").textContent = data.count
     }
@@ -51,3 +47,24 @@ ws.onclose = (event) => {
 ws.onerror = (event) => {
     console.warn("Error on Websockets: " + event.code, event.reason)
 }
+
+const submitButton = document.querySelector('.submit-vote')
+
+submitButton.addEventListener('click', () => {
+    const optionHTML = document.querySelector('.poll-option.selected')
+    const optionId = optionHTML.dataset.optionId
+
+    if (!optionHTML || !optionId) {
+        return
+    }
+
+    submitButton.innerHTML = '<div class="loader"></div>'
+
+    ws.send(JSON.stringify({
+        action: 'voting',
+        optionId: optionId,
+        userId: userId
+    }))
+
+    console.log(optionId)
+})
