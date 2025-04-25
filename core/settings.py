@@ -216,3 +216,5 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+REDIS_URL = "redis://localhost:6381"
