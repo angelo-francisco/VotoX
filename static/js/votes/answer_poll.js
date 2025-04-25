@@ -54,6 +54,7 @@ ws.onmessage = event => {
             }
         })
 
+        document.querySelector('#total-votes').innerText = data.total_votes
     }
 }
 
