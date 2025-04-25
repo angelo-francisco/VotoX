@@ -119,16 +119,19 @@ def go_poll(request):
         poll = Poll.objects.filter(code=code).first()
 
         if poll and poll.is_active:
-            return JsonResponse({'msg': 'Redirecting to the poll room...', 'code': poll.code})
-        return JsonResponse({'msg': 'Invalid or ended poll'}, status=400)
-    
-    return render(request, 'votes/go_poll.html')
+            return JsonResponse(
+                {"msg": "Redirecting to the poll room...", "code": poll.code}
+            )
+        return JsonResponse({"msg": "Invalid or ended poll"}, status=400)
+
+    return render(request, "votes/go_poll.html")
 
 
 def answer_poll(request, code):
     poll = get_object_or_404(Poll, code=code)
     options = get_list_or_404(PollOption, poll=poll)
-    
-    ctx = {'poll': poll, 'options': options}
+    user_has_voted = poll.user_has_voted(request.user)
 
-    return render(request, 'votes/answer_poll.html', ctx)
+    ctx = {"poll": poll, "options": options, "user_has_voted": user_has_voted}
+
+    return render(request, "votes/answer_poll.html", ctx)
