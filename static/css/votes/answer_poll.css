@@ -15,6 +15,28 @@
     color: var(--text-light);
 }
 
+#question_information {
+    /* Layout */
+    min-width: 100%;
+    padding: 3px;
+    margin-bottom: 10px;
+    text-align: center;
+    background: var(--primary);
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: background 0.3s ease, transform 0.2s ease, opacity 0.4s ease;
+    display: inline-block;
+}
+
+#question_information.hide {
+    display: none;
+    pointer-events: none;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;

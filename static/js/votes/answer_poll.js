@@ -56,8 +56,34 @@ ws.onmessage = event => {
 
         document.querySelector("#total_votes_number").innerText = data.total_votes
     }
-}
 
+    if (data.type === "questioning") {
+        let message = ''
+        const usernames = data.usernames
+        const total = usernames.length
+
+        message = `${usernames.join(', ')} ${total === 1 ? 'is' : 'are'} typing...`
+
+        if (total > 3) {
+            message = `${usernames.slice(0, 3).join(', ')}, and +${total - 3} are typing…`;
+        }
+
+        const spanHTML = document.getElementById('question_information')
+
+        spanHTML.classList.add('typing');
+        spanHTML.classList.remove('hide');
+
+        spanHTML.textContent = message
+    }
+
+    if (data.type === 'stop_questioning') {
+        const spanHTML = document.getElementById('question_information')
+        spanHTML.textContent = ''
+
+        spanHTML.classList.add('hide');
+        spanHTML.classList.remove('typing');
+    }
+}
 ws.onclose = (event) => {
     console.log("Connection Closed")
 }
@@ -86,3 +112,27 @@ if (submitButton) {
         }))
     })
 }
+
+const commentInput = document.querySelector('.comment-input')
+let typingTimeOut = null
+let isTyping = false
+
+commentInput.addEventListener('input', () => {
+    if (!isTyping) {
+        ws.send(JSON.stringify({
+            action: 'questioning',
+            username: username
+        }))
+        isTyping = true
+    }
+
+    clearTimeout(typingTimeOut)
+
+    typingTimeOut = setTimeout(() => {
+        ws.send(JSON.stringify({
+            action: 'stop_questioning',
+            username: username
+        }));
+        isTyping = false
+    }, 3000);
+})

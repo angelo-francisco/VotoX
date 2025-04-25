@@ -95,3 +95,11 @@ def get_poll_option_percentage(poll: Poll, option_id: int):
         total_votes += poll_option.votes.count()
 
     return (round((option_votes * 100) / total_votes)) if total_votes else 0
+
+
+@database_sync_to_async
+def add_question(poll: Poll, body: str, user: User): # type: ignore
+    """
+    Add a new poll question
+    """
+    ...

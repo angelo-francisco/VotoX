@@ -27,6 +27,7 @@
       <div class="tab-content">
         <div id="comment" class="tab-pane">
           <div class="comment-section">
+            <span id="question_information" class="hide"></span>
             <div class="comments-list">
               <div class="comment">
                 <div class="comment-header">
@@ -87,6 +88,7 @@
     <script>
       const pollCode = '{{ poll.code }}'
       const userId = '{{ request.user.id }}'
+      const username = '{{ request.user.username }}'
     </script>
     <script src="{% static 'js/votes/answer_poll.js' %}"></script>
   </body>

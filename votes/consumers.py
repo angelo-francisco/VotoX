@@ -1,7 +1,10 @@
 import json
 
 from channels.exceptions import DenyConnection, StopConsumer
-from channels.generic.websocket import AsyncWebsocketConsumer, AsyncJsonWebsocketConsumer
+from channels.generic.websocket import (
+    AsyncWebsocketConsumer,
+    AsyncJsonWebsocketConsumer,
+)
 from django.conf import settings
 from redis import asyncio as aioredis
 
@@ -29,6 +32,7 @@ class VoteConsumer(AsyncWebsocketConsumer):
 
         self.room = f"answer_poll_room_{code}"
         self.redis_key = f"online_users:{code}"
+        self.redis_secondary_key = f"typing_users:{code}"
 
         await self.accept()
         await self.channel_layer.group_add(self.room, self.channel_name)
@@ -55,6 +59,55 @@ class VoteConsumer(AsyncWebsocketConsumer):
 
                 if option_id.isdigit():
                     await self.vote_in_poll(int(option_id))
+
+            case "questioning":
+                username = data.get("username")
+
+                if username:
+                    await self.add_typing_user(username)
+                    await self.channel_layer.group_send(
+                        self.room,
+                        {"type": "update.question.information", "action": action},
+                    )
+
+            case "stop_questioning":
+                username = data.get("username")
+
+                if username:
+                    await self.remove_typing_user(username)
+                    await self.channel_layer.group_send(
+                        self.room,
+                        {"type": "update.question.information", "action": action},
+                    )
+
+            case "questioned":
+                body = data.get("body").strip()
+
+                if body:
+                    await self.new_poll_question(body)
+
+    async def add_typing_user(self, username):
+        redis = await aioredis.from_url(settings.REDIS_URL)
+        await redis.sadd(self.redis_secondary_key, username)
+        await redis.expire(self.redis_secondary_key, 3600)
+
+    async def remove_typing_user(self, username):
+        redis = await aioredis.from_url(settings.REDIS_URL)
+        await redis.srem(self.redis_secondary_key, username)
+
+    async def update_question_information(self, event):
+        redis = await aioredis.from_url(settings.REDIS_URL)
+
+        usernames = await redis.smembers(self.redis_secondary_key)
+        decoded_usernames = [username.decode("utf-8") for username in usernames]
+
+        await self.send(
+            text_data=json.dumps(
+                {"type": event["action"], "usernames": decoded_usernames}
+            )
+        )
+
+    async def new_poll_question(self, body): ...
 
     async def vote_in_poll(self, option_id):
         await vote_on_poll_option(self.poll, option_id, self.user)

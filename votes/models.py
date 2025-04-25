@@ -92,3 +92,10 @@ class Comment(models.Model):
     commented_by = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class PollQuestion(models.Model):
+    poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name="questions")
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
