@@ -70,7 +70,7 @@
           </div>
 
           
-          {% if user_has_voted %}
+          {% if not user_has_voted %}
           <button class="submit-vote" id="submit-vote-{{request.user.id}}">Submit Vote</button>
           {% endif %}
           <div class="poll-meta">
