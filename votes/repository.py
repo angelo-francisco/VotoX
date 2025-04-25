@@ -46,11 +46,25 @@ def vote_on_poll_option(poll: Poll, option_id: int, user: User):  # type: ignore
         return None
 
     option.votes.add(user)
-    return option
 
 
 @database_sync_to_async
-def get_option_percentage(poll: Poll, option_id: int):
+def get_poll_options_statistics(poll: Poll):
+    """
+    Return the statistics of all options in the poll
+    """
+
+    options = PollOption.objects.filter(poll=poll)
+    data = []
+
+    for option in options:
+        percentage = get_poll_option_percentage(poll, option.id)
+        data.append((option.id, percentage))
+
+    return data
+
+
+def get_poll_option_percentage(poll: Poll, option_id: int):
     """
     Get the percentage vote of an option
     """
@@ -65,5 +79,5 @@ def get_option_percentage(poll: Poll, option_id: int):
 
     for poll_option in poll_options:
         total_votes += poll_option.votes.count()
-    
-    return ((option_votes * 100) / total_votes) if total_votes else 0
+
+    return (round((option_votes * 100) / total_votes)) if total_votes else 0
