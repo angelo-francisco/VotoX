@@ -131,7 +131,7 @@ def answer_poll(request, code):
     poll = get_object_or_404(Poll, code=code)
     options = get_list_or_404(PollOption, poll=poll)
     user_has_voted = poll.user_has_voted(request.user)
-    questions = PollQuestion.objects.filter(poll=poll)
+    questions = PollQuestion.objects.filter(poll=poll).order_by('-created_at')
 
     ctx = {
         "poll": poll,
@@ -139,5 +139,5 @@ def answer_poll(request, code):
         "user_has_voted": user_has_voted,
         "questions": questions,
     }
-    
+
     return render(request, "votes/answer_poll.html", ctx)

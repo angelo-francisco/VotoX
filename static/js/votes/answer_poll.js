@@ -140,11 +140,7 @@ ws.onmessage = event => {
 
         const timeSpan = commentEl.querySelector('.comment-time');
         timeSpan.textContent = timeAgo(data.created_at);
-
-        setInterval(() => {
-            timeSpan.textContent = timeAgo(data.created_at);
-        }, 30000);
-
+        
         commentEl.querySelector('.comment-text').textContent = data.body
 
         const commentList = document.querySelector('.comments-list')
