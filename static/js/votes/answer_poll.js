@@ -21,6 +21,7 @@ function selectOption(element) {
     }
 
     element.classList.add('selected')
+
 }
 
 const ws = new WebSocket(`ws://${window.location.host}/vote/${pollCode}/`)
@@ -30,13 +31,28 @@ ws.onopen = event => {
 }
 
 ws.onmessage = event => {
-    console.log("Got a message")
-    console.log(event)
-
     const data = JSON.parse(event.data)
 
     if (data.type === "user_count") {
         document.getElementById("js-voting-user-count").textContent = data.count
+    }
+
+    if (data.type === "voting") {
+        const percentage = `${data.percentage}%`
+        
+        console.log(percentage)
+
+        const optionPercentage = document.querySelector(`#percentage-${data.optionId}`)
+        const progressBar = document.querySelector(`#progress-${data.optionId}`)
+        
+        if (optionPercentage) {
+            optionPercentage.innerText = percentage
+        }
+
+        if (progressBar) {
+            progressBar.style.width = percentage
+        }
+
     }
 }
 
@@ -52,19 +68,17 @@ const submitButton = document.querySelector('.submit-vote')
 
 submitButton.addEventListener('click', () => {
     const optionHTML = document.querySelector('.poll-option.selected')
-    const optionId = optionHTML.dataset.optionId
-
-    if (!optionHTML || !optionId) {
+    
+    if (!optionHTML) {
         return
     }
 
-    submitButton.innerHTML = '<div class="loader"></div>'
+    const optionId = optionHTML.dataset.optionId
+
+    submitButton.remove()
 
     ws.send(JSON.stringify({
         action: 'voting',
         optionId: optionId,
-        userId: userId
     }))
-
-    console.log(optionId)
 })

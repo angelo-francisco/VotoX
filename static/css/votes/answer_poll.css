@@ -10,6 +10,11 @@
     --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.disabled {
+    background-color: var(--primary-dark);
+    color: var(--text-light);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
