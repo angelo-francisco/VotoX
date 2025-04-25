@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render, get_list_or_40
 from django.urls import reverse
 
 from .forms import PollCreationForm, PollOptionForm
-from .models import Comment, Poll, PollOption
+from .models import Comment, Poll, PollOption, PollQuestion
 
 User = get_user_model()
 
@@ -131,7 +131,13 @@ def answer_poll(request, code):
     poll = get_object_or_404(Poll, code=code)
     options = get_list_or_404(PollOption, poll=poll)
     user_has_voted = poll.user_has_voted(request.user)
+    questions = PollQuestion.objects.filter(poll=poll)
 
-    ctx = {"poll": poll, "options": options, "user_has_voted": user_has_voted}
-
+    ctx = {
+        "poll": poll,
+        "options": options,
+        "user_has_voted": user_has_voted,
+        "questions": questions,
+    }
+    
     return render(request, "votes/answer_poll.html", ctx)

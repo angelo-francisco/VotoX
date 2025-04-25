@@ -28,22 +28,19 @@
         <div id="comment" class="tab-pane">
           <div class="comment-section">
             <span id="question_information" class="hide"></span>
-            <div class="comments-list">
+            <div class="comments-list" style="max-height: 280px;">
+              
+              {% for question in questions %}
               <div class="comment">
                 <div class="comment-header">
-                  <span class="user-name">John Doe</span>
-                  <span class="comment-time">5m ago</span>
+                  <span class="user-name">{{ question.author.username }}</span>
+                  <span class="comment-time" data-time="{{ question.created_at.isoformat }}"></span>
                 </div>
-                <p class="comment-text">Is this poll going to be open for long? I'd like to share it with my team.</p>
+                <p class="comment-text">{{ question.body }}</p>
               </div>
-
-              <div class="comment">
-                <div class="comment-header">
-                  <span class="user-name">Emily Sanders</span>
-                  <span class="comment-time">10m ago</span>
-                </div>
-                <p class="comment-text">Great options! Is there any way to add a custom response?</p>
-              </div>
+              {% empty %}
+              <div class="no-quests">No questions/comments until now</div>
+              {% endfor %}
             </div>
 
             <div class="comment-form">

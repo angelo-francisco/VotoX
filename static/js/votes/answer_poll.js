@@ -24,6 +24,40 @@ function selectOption(element) {
 
 }
 
+function timeAgo(timestamp) {
+    const now = new Date();
+    const then = new Date(timestamp);
+    const secondsAgo = Math.floor((now - then) / 1000);
+
+    const intervals = {
+        year: 31536000,
+        month: 2592000,
+        day: 86400,
+        hour: 3600,
+        minute: 60,
+        second: 1,
+    };
+
+    for (let [nome, segundos] of Object.entries(intervals)) {
+        const quantidade = Math.floor(secondsAgo / segundos);
+        if (quantidade > 0) {
+            return `${quantidade} ${nome}${quantidade > 1 ? 's' : ''} ago`;
+        }
+    }
+
+    return 'just now';
+}
+
+function updateAllTimes() {
+    document.querySelectorAll('.comment-time')
+        .forEach(element => {
+            element.textContent = timeAgo(element.dataset.time);
+        });
+}
+
+updateAllTimes();
+setInterval(updateAllTimes, 30000);
+
 const ws = new WebSocket(`ws://${window.location.host}/vote/${pollCode}/`)
 
 ws.onopen = event => {
@@ -85,6 +119,11 @@ ws.onmessage = event => {
     }
 
     if (data.type === "questioned") {
+        const noQuests = document.querySelector('.no-quests')
+
+        if (noQuests) {
+            noQuests.remove()
+        }
 
         const commentEl = document.createElement('div');
         commentEl.classList.add('comment');
@@ -98,7 +137,14 @@ ws.onmessage = event => {
         `
 
         commentEl.querySelector('.user-name').textContent = data.author
-        commentEl.querySelector('.comment-time').textContent = data.created_at
+
+        const timeSpan = commentEl.querySelector('.comment-time');
+        timeSpan.textContent = timeAgo(data.created_at);
+
+        setInterval(() => {
+            timeSpan.textContent = timeAgo(data.created_at);
+        }, 30000);
+
         commentEl.querySelector('.comment-text').textContent = data.body
 
         const commentList = document.querySelector('.comments-list')
@@ -174,5 +220,6 @@ if (submitComment) {
             userId: userId
 
         }))
+        commentInput.value = ''
     })
 }
