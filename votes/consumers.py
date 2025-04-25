@@ -3,17 +3,19 @@ import json
 from channels.exceptions import DenyConnection, StopConsumer
 from channels.generic.websocket import (
     AsyncWebsocketConsumer,
-    AsyncJsonWebsocketConsumer,
 )
 from django.conf import settings
+from django.contrib.humanize.templatetags import humanize
 from redis import asyncio as aioredis
 
 from .repository import (
+    add_question,
     check_poll,
     check_user,
     get_poll,
     get_poll_options_statistics,
     get_total_votes,
+    get_user,
     vote_on_poll_option,
 )
 
@@ -82,9 +84,10 @@ class VoteConsumer(AsyncWebsocketConsumer):
 
             case "questioned":
                 body = data.get("body").strip()
+                user_id = data.get("userId").strip()
 
-                if body:
-                    await self.new_poll_question(body)
+                if body and user_id:
+                    await self.new_poll_question(body, user_id)
 
     async def add_typing_user(self, username):
         redis = await aioredis.from_url(settings.REDIS_URL)
@@ -107,7 +110,31 @@ class VoteConsumer(AsyncWebsocketConsumer):
             )
         )
 
-    async def new_poll_question(self, body): ...
+    async def new_poll_question(self, body, user_id):
+        user = await get_user(id=user_id)
+        question = await add_question(self.poll, body, user)
+
+        await self.channel_layer.group_send(
+            self.room,
+            {
+                "type": "update.question",
+                "author": question.author.username,
+                "body": question.body,
+                "created_at": question.created_at.isoformat(    ),
+            },
+        )
+
+    async def update_question(self, event):
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "questioned",
+                    "author": event["author"],
+                    "body": event["body"],
+                    "created_at": event["created_at"],
+                }
+            )
+        )
 
     async def vote_in_poll(self, option_id):
         await vote_on_poll_option(self.poll, option_id, self.user)

@@ -83,6 +83,27 @@ ws.onmessage = event => {
         spanHTML.classList.add('hide');
         spanHTML.classList.remove('typing');
     }
+
+    if (data.type === "questioned") {
+
+        const commentEl = document.createElement('div');
+        commentEl.classList.add('comment');
+
+        commentEl.innerHTML = `
+            <div class="comment-header">
+                <span class="user-name"></span>
+                <span class="comment-time"></span>
+            </div>
+            <p class="comment-text"></p>
+        `
+
+        commentEl.querySelector('.user-name').textContent = data.author
+        commentEl.querySelector('.comment-time').textContent = data.created_at
+        commentEl.querySelector('.comment-text').textContent = data.body
+
+        const commentList = document.querySelector('.comments-list')
+        commentList.prepend(commentEl)
+    }
 }
 ws.onclose = (event) => {
     console.log("Connection Closed")
@@ -136,3 +157,22 @@ commentInput.addEventListener('input', () => {
         isTyping = false
     }, 3000);
 })
+
+const submitComment = document.querySelector('.submit-comment')
+
+if (submitComment) {
+    submitComment.addEventListener('click', () => {
+        const text = commentInput.value.trim()
+
+        if (!text) {
+            return
+        }
+
+        ws.send(JSON.stringify({
+            action: 'questioned',
+            body: text,
+            userId: userId
+
+        }))
+    })
+}

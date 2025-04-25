@@ -1,7 +1,7 @@
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 
-from .models import Poll, PollOption
+from .models import Poll, PollOption, PollQuestion
 
 User = get_user_model()
 
@@ -102,4 +102,17 @@ def add_question(poll: Poll, body: str, user: User): # type: ignore
     """
     Add a new poll question
     """
-    ...
+    question = PollQuestion.objects.create(
+        poll=poll,
+        author=user,
+        body=body
+    )
+
+    return question
+
+@database_sync_to_async
+def get_user(**kwargs):
+    """
+    Get a user by the kwargs
+    """
+    return User.objects.filter(**kwargs).first()
