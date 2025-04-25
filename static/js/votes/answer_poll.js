@@ -38,20 +38,21 @@ ws.onmessage = event => {
     }
 
     if (data.type === "voting") {
-        const percentage = `${data.percentage}%`
-        
-        console.log(percentage)
+        data.optionsData.forEach(optionData => {
+            const optionId = optionData[0]
+            const percentage = `${optionData[1]}%`
 
-        const optionPercentage = document.querySelector(`#percentage-${data.optionId}`)
-        const progressBar = document.querySelector(`#progress-${data.optionId}`)
-        
-        if (optionPercentage) {
-            optionPercentage.innerText = percentage
-        }
+            const optionPercentage = document.querySelector(`#percentage-${optionId}`)
+            const progressBar = document.querySelector(`#progress-${optionId}`)
 
-        if (progressBar) {
-            progressBar.style.width = percentage
-        }
+            if (optionPercentage) {
+                optionPercentage.innerText = percentage
+            }
+
+            if (progressBar) {
+                progressBar.style.width = percentage
+            }
+        })
 
     }
 }
@@ -68,7 +69,7 @@ const submitButton = document.querySelector('.submit-vote')
 
 submitButton.addEventListener('click', () => {
     const optionHTML = document.querySelector('.poll-option.selected')
-    
+
     if (!optionHTML) {
         return
     }
