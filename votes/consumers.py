@@ -120,7 +120,7 @@ class VoteConsumer(AsyncWebsocketConsumer):
                 "type": "update.question",
                 "author": question.author.username,
                 "body": question.body,
-                "created_at": question.created_at.isoformat(    ),
+                "created_at": question.created_at.isoformat(),
             },
         )
 
