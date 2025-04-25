@@ -70,8 +70,9 @@ def get_total_votes(poll):
     Return the total of votes done in a poll
     """
     total_votes = 0
-
-    for option in poll.options:
+    options = PollOption.objects.filter(poll=poll)
+    
+    for option in options:
         total_votes += option.votes.count()
 
     return total_votes
