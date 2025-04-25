@@ -4,9 +4,15 @@ from channels.exceptions import DenyConnection, StopConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
 from redis import asyncio as aioredis
 
-from .repository import check_poll, check_user, get_poll
+from django.conf import settings
 
-REDIS_URL = "redis://localhost:6381"
+from .repository import (
+    check_poll,
+    check_user,
+    get_poll,
+    get_option_percentage,
+    vote_on_poll_option,
+)
 
 
 class VoteConsumer(AsyncWebsocketConsumer):
@@ -32,24 +38,55 @@ class VoteConsumer(AsyncWebsocketConsumer):
         await self.broadcast_user_count()
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.room, self.channel_name)
         await self.mark_offline()
         await self.broadcast_user_count()
+        await self.channel_layer.group_discard(self.room, self.channel_name)
         raise StopConsumer("Consumer stop working completely")
 
-    async def receive(self, text_data): ...
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        action = data.get("action")
+
+        match action:
+            case "voting":
+                option_id = data.get("optionId")
+
+                if option_id.isdigit():
+                    await self.vote_in_poll(int(option_id))
+
+    async def vote_in_poll(self, option_id):
+        option = await vote_on_poll_option(self.poll, option_id, self.user)
+
+        if option:
+            await self.channel_layer.group_send(
+                self.room, {"type": "poll.update", "option_id": option.id}
+            )
+
+    async def poll_update(self, event):
+        percentage = await get_option_percentage(self.poll, event["option_id"])
+
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "voting",
+                    "optionId": event["option_id"],
+                    "percentage": percentage,
+                    "userId": self.user.id,
+                }
+            )
+        )
 
     async def mark_online(self):
-        redis = await aioredis.from_url(REDIS_URL)
+        redis = await aioredis.from_url(settings.REDIS_URL)
         await redis.sadd(self.redis_key, self.user.id)
         await redis.expire(self.redis_key, 3600)
 
     async def mark_offline(self):
-        redis = await aioredis.from_url(REDIS_URL)
+        redis = await aioredis.from_url(settings.REDIS_URL)
         await redis.srem(self.redis_key, self.user.id)
 
     async def broadcast_user_count(self):
-        redis = await aioredis.from_url(REDIS_URL)
+        redis = await aioredis.from_url(settings.REDIS_URL)
         count = await redis.scard(self.redis_key)
 
         await self.channel_layer.group_send(
@@ -61,9 +98,11 @@ class VoteConsumer(AsyncWebsocketConsumer):
         )
 
     async def user_count(self, event):
-        await self.send(text_data=json.dumps(
-            {
-                "type": "user_count",
-                "count": event["count"],
-            })
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "user_count",
+                    "count": event["count"],
+                }
+            )
         )
