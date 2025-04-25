@@ -67,19 +67,21 @@ ws.onerror = (event) => {
 
 const submitButton = document.querySelector('.submit-vote')
 
-submitButton.addEventListener('click', () => {
-    const optionHTML = document.querySelector('.poll-option.selected')
+if (submitButton) {
+    submitButton.addEventListener('click', () => {
+        const optionHTML = document.querySelector('.poll-option.selected')
 
-    if (!optionHTML) {
-        return
-    }
+        if (!optionHTML) {
+            return
+        }
 
-    const optionId = optionHTML.dataset.optionId
+        const optionId = optionHTML.dataset.optionId
 
-    submitButton.remove()
+        submitButton.remove()
 
-    ws.send(JSON.stringify({
-        action: 'voting',
-        optionId: optionId,
-    }))
-})
+        ws.send(JSON.stringify({
+            action: 'voting',
+            optionId: optionId,
+        }))
+    })
+}
