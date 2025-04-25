@@ -46,7 +46,7 @@ class Poll(models.Model):
     results_visible = models.BooleanField(default=True, null=True, blank=True)
     was_edited = models.BooleanField(default=False, null=True, blank=True)
     code = models.CharField(max_length=4, null=True, blank=True)
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
@@ -60,9 +60,11 @@ class Poll(models.Model):
     def is_active(self):
         return self.end_at is None or self.end_at > timezone.now()
 
-
     @property
     def get_stars(self): ...
+
+    def user_has_voted(self, user):
+        return self.options.filter(votes=user).exists()
 
     @property
     def get_votes_count(self): ...
