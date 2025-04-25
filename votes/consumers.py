@@ -1,7 +1,7 @@
 import json
 
 from channels.exceptions import DenyConnection, StopConsumer
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer, AsyncJsonWebsocketConsumer
 from django.conf import settings
 from redis import asyncio as aioredis
 
