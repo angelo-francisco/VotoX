@@ -1,7 +1,7 @@
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 
-from .models import Poll
+from .models import Poll, PollOption
 
 User = get_user_model()
 
@@ -25,4 +25,45 @@ def check_poll(poll: Poll | None) -> bool:
 
 @database_sync_to_async
 def check_user(user: User) -> bool:  # type: ignore
+    """
+    Check if the user is authenticated and if him account
+    """
     return user.is_authenticated and user.is_active
+
+
+@database_sync_to_async
+def vote_on_poll_option(poll: Poll, option_id: int, user: User):  # type: ignore
+    """
+    Add user the a poll option and if user already vote return none
+    """
+
+    if poll.user_has_voted(user):
+        return None
+
+    option = poll.options.filter(id=option_id).first()
+
+    if not option:
+        return None
+
+    option.votes.add(user)
+    return option
+
+
+@database_sync_to_async
+def get_option_percentage(poll: Poll, option_id: int):
+    """
+    Get the percentage vote of an option
+    """
+    option = PollOption.objects.filter(id=option_id).first()
+
+    if not option:
+        return None
+
+    option_votes = option.votes.count()
+    poll_options = PollOption.objects.filter(poll=poll)
+    total_votes = 0
+
+    for poll_option in poll_options:
+        total_votes += poll_option.votes.count()
+    
+    return ((option_votes * 100) / total_votes) if total_votes else 0
