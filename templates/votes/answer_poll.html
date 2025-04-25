@@ -74,7 +74,7 @@
           <button class="submit-vote" id="submit-vote-{{request.user.id}}">Submit Vote</button>
           {% endif %}
           <div class="poll-meta">
-            <span id="total-votes">Total votes: 0</span>
+            <span id="total-votes">Total votes: <span id="total_votes_number">0</span></span>
             <span id="active-users">• <span id="js-voting-user-count">0</span> person voting</span>
             {% if poll.end_at %}
               • <span id="countdown">Poll ends in <span id="time-remaining">loading...</span></span>
