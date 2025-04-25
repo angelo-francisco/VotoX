@@ -64,6 +64,19 @@ def get_poll_options_statistics(poll: Poll):
     return data
 
 
+@database_sync_to_async
+def get_total_votes(poll):
+    """
+    Return the total of votes done in a poll
+    """
+    total_votes = 0
+
+    for option in poll.options:
+        total_votes += option.votes.count()
+
+    return total_votes
+
+
 def get_poll_option_percentage(poll: Poll, option_id: int):
     """
     Get the percentage vote of an option
