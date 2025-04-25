@@ -25,3 +25,29 @@ function selectOption(element) {
 
 const ws = new WebSocket(`ws://${window.location.host}/vote/${pollCode}/`)
 
+ws.onopen = event => {
+    console.log("Connected!", event)
+}
+
+ws.onmessage = event => {
+    console.log("Got a message")
+    console.log(event)
+
+    const data = JSON.parse(event.data)
+
+    if (data.type === "user_status" && data.status === "online") {
+        console.log(`Usuário ${data.user_id} está online`)
+    }
+
+    if (data.type === "user_count") {
+        document.getElementById("js-voting-user-count").textContent = data.count
+    }
+}
+
+ws.onclose = (event) => {
+    console.log("Connection Closed")
+}
+
+ws.onerror = (event) => {
+    console.warn("Error on Websockets: " + event.code, event.reason)
+}
