@@ -1,5 +1,6 @@
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 from .models import Poll, PollOption, PollQuestion
 
@@ -29,6 +30,11 @@ def check_user(user: User) -> bool:  # type: ignore
     Check if the user is authenticated and if him account
     """
     return user.is_authenticated and user.is_active
+
+
+@database_sync_to_async
+def has_end_at(poll: Poll):
+    return poll.end_at is not None
 
 
 @database_sync_to_async
@@ -65,13 +71,13 @@ def get_poll_options_statistics(poll: Poll):
 
 
 @database_sync_to_async
-def get_total_votes(poll):
+def get_total_votes(poll: Poll):
     """
     Return the total of votes done in a poll
     """
     total_votes = 0
     options = PollOption.objects.filter(poll=poll)
-    
+
     for option in options:
         total_votes += option.votes.count()
 
@@ -98,17 +104,14 @@ def get_poll_option_percentage(poll: Poll, option_id: int):
 
 
 @database_sync_to_async
-def add_question(poll: Poll, body: str, user: User): # type: ignore
+def add_question(poll: Poll, body: str, user: User):  # type: ignore
     """
     Add a new poll question
     """
-    question = PollQuestion.objects.create(
-        poll=poll,
-        author=user,
-        body=body
-    )
+    question = PollQuestion.objects.create(poll=poll, author=user, body=body)
 
     return question
+
 
 @database_sync_to_async
 def get_user(**kwargs):
@@ -116,3 +119,29 @@ def get_user(**kwargs):
     Get a user by the kwargs
     """
     return User.objects.filter(**kwargs).first()
+
+
+@database_sync_to_async
+def get_remaining_time(poll: Poll):
+    """
+    Return the remaining time to a poll
+    """
+    if not poll.end_at:
+        return None
+
+    now = timezone.now()
+
+    if now >= poll.end_at:
+        return "Encerrada"
+
+    delta = poll.end_at - now
+    days = delta.days
+    hours, remainder = divmod(delta.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    if days > 0:
+        return f"<span>{days}d:</span><span>{hours}h:</span><span>{minutes}m:</span><span>{seconds}s</span>"
+    elif hours > 0:
+        return f"<span>{hours}h:</span><span>{minutes}m:</span><span>{seconds}s</span>"
+    else:
+        return f"<span>{minutes}m:</span><span>{seconds}s</span>"
