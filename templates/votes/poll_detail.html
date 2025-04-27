@@ -9,6 +9,26 @@
   {{ poll.title }}
 {% endblock %}
 {% block content %}
+  <div id="pollClosedModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Poll Closed</h2>
+        <span class="close-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="success-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+          </svg>
+        </div>
+        <p>The poll "{{ poll.title }}" has been successfully closed.</p>
+        <p>No more votes will be accepted for this poll.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="confirm-btn">OK</button>
+      </div>
+    </div>
+  </div>
   <div class="container">
     <div class="poll-detail">
       <div class="poll-main">
@@ -57,16 +77,16 @@
               <div class="user-actions" style="display: flex;align-items: center;gap: 10px;flex-wrap: wrap;">
                 <button type="submit" class="vote-btn" onclick="window.location.href='{% url 'answer_poll' poll.code %}'">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
                   </svg>Vote
                 </button>
-                {% if poll.results_visible %}
-                <button class="action-btn" id="toggle-results">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
-                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
-                  </svg>Results
-                </button>
+                {% if not poll.end_at and poll.created_by == request.user %}
+                  <button class="action-btn" id="closeBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                      <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                    </svg>Close
+                  </button>
                 {% endif %}
               </div>
             </div>
@@ -77,22 +97,17 @@
           <div class="detail-content">
             <h2>Comments</h2>
             {% if request.user.is_authenticated %}
-            <form method="post" 
-              hx-post="{% url 'manage_comments' poll_slug=poll.slug %}"
-              hx-trigger="submit"
-              hx-target="#comments"
-              hx-indicator=".loader"
-            >
-              {% csrf_token %}
-              <div class="comment-form">
-                <textarea name="comment" placeholder="Write your comment right here" rows="1" class="comment-input" required></textarea>
-                <button type="submit" class="vote-btn-2" style="cursor: pointer;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="color: white;" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
-                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
-                  </svg>
-                </button>
-              </div>
-            </form>
+              <form method="post" hx-post="{% url 'manage_comments' poll_slug=poll.slug %}" hx-trigger="submit" hx-target="#comments" hx-indicator=".loader">
+                {% csrf_token %}
+                <div class="comment-form">
+                  <textarea name="comment" placeholder="Write your comment right here" rows="1" class="comment-input" required></textarea>
+                  <button type="submit" class="vote-btn-2" style="cursor: pointer;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="color: white;" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                      <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
+                    </svg>
+                  </button>
+                </div>
+              </form>
             {% endif %}
 
             {% include 'partials/comments.html' %}
@@ -231,6 +246,28 @@
         correctLevel: QRCode.CorrectLevel.H
       })
     })
+
+    const modal = document.getElementById('pollClosedModal');
+      const closeModalBtn = document.querySelector('.close-modal');
+      const confirmBtn = document.querySelector('.confirm-btn');
+      
+      if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', function() {
+          modal.style.display = 'none';
+        });
+      }
+      
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+          modal.style.display = 'none';
+        });
+      }
+      
+      window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+          modal.style.display = 'none';
+        }
+      })
     
     copyLink = (link) => {
       const type = 'text/plain'
@@ -241,22 +278,56 @@
         .write([item])
         .then(() => {
           document.querySelector('#copy-btn').innerHTML = `
-              <svg xmlns="http://www.w3.org/2000/svg" style="color: green;" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
-                <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
-              </svg> Copied`
+                      <svg xmlns="http://www.w3.org/2000/svg" style="color: green;" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+                        <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                      </svg> Copied`
           document.querySelector('#copy-btn').setAttribute('disabled', '')
     
           setTimeout(() => {
             document.querySelector('#copy-btn').innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
-                  <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
-                  <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
-                </svg> Copy`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                          <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+                          <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+                        </svg> Copy`
           }, 3000)
         })
         .catch((err) => {
           console.error('Erro ao copiar:', err)
         })
     }
+
+    {% if not poll.end_at and poll.created_by == request.user %}
+    const ws = new WebSocket(`ws://${window.location.host}/vote/{{poll.code}}/`)
+    
+    ws.onopen = (event) => {
+      console.log('Connected!', event)
+    }
+    
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data)
+
+      if (data.type === 'close_poll') {
+        modal.style.display = 'block';
+        
+        const closeBtn = document.querySelector("#closeBtn");
+        if (closeBtn) {
+          closeBtn.disabled = true;
+          closeBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+              <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+            </svg>Closed`;
+          closeBtn.classList.add('disabled-btn');
+        }
+      }
+    }
+
+    const closePoll = document.querySelector("#closeBtn")
+
+    closePoll.addEventListener('click', () => {
+      ws.send(JSON.stringify({
+        'action': 'close_poll'
+      }))
+    })
+    {% endif %}
   </script>
-{% endblock %}uy78ujhn
+{% endblock %}

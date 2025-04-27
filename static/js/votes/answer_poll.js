@@ -64,8 +64,32 @@ ws.onopen = event => {
     console.log("Connected!", event)
 }
 
+const modal = document.getElementById('pollClosedModal');
+const closeModalBtn = document.querySelector('.close-modal');
+const confirmBtn = document.querySelector('.confirm-btn');
+
+if (closeModalBtn) {
+    closeModalBtn.addEventListener('click', function () {
+        modal.style.display = 'none';
+    });
+}
+
+if (confirmBtn) {
+    confirmBtn.addEventListener('click', function () {
+        modal.style.display = 'none';
+    });
+}
+
+window.addEventListener('click', function (event) {
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+})
+
 ws.onmessage = event => {
     const data = JSON.parse(event.data)
+
+    console.log(data)
 
     if (data.type === "user_count") {
         document.getElementById("js-voting-user-count").textContent = data.count
@@ -168,6 +192,26 @@ ws.onmessage = event => {
             endedMessage.className = 'poll-ended-message';
             endedMessage.textContent = 'This poll has ended. Thank you for participating!';
             document.querySelector('.poll-meta').appendChild(endedMessage);
+        }
+    }
+
+    if (data.type === 'close_poll') {
+        modal.style.display = 'block';
+
+        const closeBtn = document.querySelector("#closeBtn");
+        if (closeBtn) {
+            closeBtn.disabled = true;
+            closeBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+              <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+            </svg>Closed`;
+            closeBtn.classList.add('disabled-btn');
+        }
+
+        const submitButton = document.querySelector('.submit-vote')
+
+        if (submitButton) {
+            submitButton.remove()
         }
     }
 }

@@ -145,3 +145,11 @@ def get_remaining_time(poll: Poll):
         return f"<span>{hours}h:</span><span>{minutes}m:</span><span>{seconds}s</span>"
     else:
         return f"<span>{minutes}m:</span><span>{seconds}s</span>"
+
+
+
+@database_sync_to_async
+def try_closing_poll(poll: Poll, user: User):
+    if not poll.end_at and poll.created_by == user:
+        poll.end_at = timezone.now()
+        poll.save()

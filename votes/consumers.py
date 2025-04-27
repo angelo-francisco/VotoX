@@ -18,7 +18,8 @@ from .repository import (
     get_user,
     vote_on_poll_option,
     get_remaining_time,
-    has_end_at
+    has_end_at,
+    try_closing_poll,
 )
 
 
@@ -49,7 +50,7 @@ class VoteConsumer(AsyncWebsocketConsumer):
 
         if await has_end_at(self.poll):
             asyncio.create_task(self.countdown_task())
-            
+
             await self.send_remaining_time()
 
     async def disconnect(self, close_code):
@@ -99,15 +100,27 @@ class VoteConsumer(AsyncWebsocketConsumer):
             case "request_countdown":
                 await self.send_remaining_time()
 
+            case "close_poll":
+                await self.channel_layer.group_send(
+                    self.room, {"type": "send.close.poll"}
+                )
+
+    async def send_close_poll(self, event):
+        
+        await try_closing_poll(self.poll, self.user)
+
+        await self.send(text_data=json.dumps({"type": "close_poll"}))
+
     async def send_remaining_time(self):
         remaining_time = await get_remaining_time(self.poll)
 
         if remaining_time:
-            await self.send(text_data=json.dumps({
-                'type': 'countdown_update',
-                'remaining_time': remaining_time
-            }))
-    
+            await self.send(
+                text_data=json.dumps(
+                    {"type": "countdown_update", "remaining_time": remaining_time}
+                )
+            )
+
     async def countdown_task(self):
         while True:
             remaining_time = await get_remaining_time(self.poll)
@@ -115,30 +128,25 @@ class VoteConsumer(AsyncWebsocketConsumer):
             if remaining_time == "Encerrada":
                 await self.channel_layer.group_send(
                     self.room,
-                    {
-                        'type': 'broadcast_countdown',
-                        'remaining_time': "Poll has ended"
-                    }
+                    {"type": "broadcast_countdown", "remaining_time": "Poll has ended"},
                 )
                 break
-            
+
             await self.channel_layer.group_send(
                 self.room,
-                {
-                    'type': 'broadcast_countdown',
-                    'remaining_time': remaining_time
-                }
+                {"type": "broadcast_countdown", "remaining_time": remaining_time},
             )
-            
+
             await asyncio.sleep(1)
-    
+
     async def broadcast_countdown(self, event):
-        remaining_time = event['remaining_time']
-        
-        await self.send(text_data=json.dumps({
-            'type': 'countdown_update',
-            'remaining_time': remaining_time
-        }))
+        remaining_time = event["remaining_time"]
+
+        await self.send(
+            text_data=json.dumps(
+                {"type": "countdown_update", "remaining_time": remaining_time}
+            )
+        )
 
     async def add_typing_user(self, username):
         redis = await aioredis.from_url(settings.REDIS_URL)
