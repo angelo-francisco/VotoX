@@ -15,8 +15,42 @@
     color: var(--text-light);
 }
 
+.end_at {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.end_at span {
+    font-size: 30px;
+}
+
+.countdown {
+    display: inline-block;
+    font-weight: 600;
+    color: var(--primary);
+    transition: all 0.3s ease;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.countdown-urgent {
+    color: #ff3860;
+    animation: pulse 1s infinite;
+}
+
 #question_information {
-    /* Layout */
     min-width: 100%;
     padding: 3px;
     margin-bottom: 10px;

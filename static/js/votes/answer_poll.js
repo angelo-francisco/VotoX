@@ -140,11 +140,35 @@ ws.onmessage = event => {
 
         const timeSpan = commentEl.querySelector('.comment-time');
         timeSpan.textContent = timeAgo(data.created_at);
-        
+
         commentEl.querySelector('.comment-text').textContent = data.body
 
         const commentList = document.querySelector('.comments-list')
         commentList.prepend(commentEl)
+    }
+
+    if (data.type === 'countdown_update') {
+        const countdownElement = document.getElementById('countdown');
+        countdownElement.innerHTML = data.remaining_time;
+
+        if (data.remaining_time.includes('m') &&
+            !data.remaining_time.includes('h') &&
+            !data.remaining_time.includes('d')) {
+            const minutes = parseInt(data.remaining_time);
+            if (minutes < 5) {
+                countdownElement.classList.add('countdown-urgent');
+            }
+        }
+
+        if (data.remaining_time === "Poll has ended") {
+            document.querySelector('.submit-vote').disabled = true;
+            document.querySelector('.submit-vote').textContent = 'Poll Closed';
+
+            const endedMessage = document.createElement('div');
+            endedMessage.className = 'poll-ended-message';
+            endedMessage.textContent = 'This poll has ended. Thank you for participating!';
+            document.querySelector('.poll-meta').appendChild(endedMessage);
+        }
     }
 }
 ws.onclose = (event) => {
@@ -219,3 +243,13 @@ if (submitComment) {
         commentInput.value = ''
     })
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+                'action': 'request_countdown'
+            }));
+        }
+    }, 1000);
+})

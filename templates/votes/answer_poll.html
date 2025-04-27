@@ -75,8 +75,10 @@
             <span id="total-votes">Total votes: <span id="total_votes_number">0</span></span>
             <span id="active-users">• <span id="js-voting-user-count">0</span> person voting</span>
             {% if poll.end_at %}
-              • <span id="countdown">Poll ends in <span id="time-remaining">loading...</span></span>
+              • <span>Poll ends in </span>
             {% endif %}
+          </div>
+          <div id="countdown" class="end_at">
           </div>
         </div>
       </div>
