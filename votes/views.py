@@ -1,9 +1,13 @@
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render, get_list_or_404
+from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 
 from .forms import PollCreationForm, PollOptionForm
 from .models import Comment, Poll, PollOption, PollQuestion
@@ -29,9 +33,6 @@ def poll_detail(request, username, poll_slug):
         Comment.objects.filter(poll=poll).order_by("-created_at"), 5
     ).get_page(1)
 
-    if hasattr("request", "htmx"):
-        ...
-
     ctx = {
         "poll": poll,
         "owner": owner,
@@ -42,6 +43,7 @@ def poll_detail(request, username, poll_slug):
     return render(request, "votes/poll_detail.html", ctx)
 
 
+@login_required
 def manage_comments(request, poll_slug):
     poll = get_object_or_404(Poll, slug=poll_slug)
     comments = Paginator(Comment.objects.filter(poll=poll).order_by("-created_at"), 5)
@@ -55,7 +57,6 @@ def manage_comments(request, poll_slug):
         elif get_previous_page:
             comments = comments.get_page(int(get_previous_page))
 
-    # just use normal javascript
     if request.method == "POST" and request.user.is_authenticated:
         body = request.POST.get("comment", "").strip()
 
@@ -81,6 +82,7 @@ def manage_comments(request, poll_slug):
     return render(request, "partials/comments.html", ctx)
 
 
+@login_required
 def new_poll(request):
     if request.method == "POST":
         form = PollCreationForm(request.POST, request.FILES)
@@ -112,6 +114,7 @@ def new_poll(request):
     return render(request, "votes/new_poll.html", ctx)
 
 
+@login_required
 def go_poll(request):
     code = request.GET.get("code", "").strip()
 
@@ -127,11 +130,12 @@ def go_poll(request):
     return render(request, "votes/go_poll.html")
 
 
+@login_required
 def answer_poll(request, code):
     poll = get_object_or_404(Poll, code=code)
     options = get_list_or_404(PollOption, poll=poll)
     user_has_voted = poll.user_has_voted(request.user)
-    questions = PollQuestion.objects.filter(poll=poll).order_by('-created_at')
+    questions = PollQuestion.objects.filter(poll=poll).order_by("-created_at")
 
     ctx = {
         "poll": poll,
@@ -141,3 +145,19 @@ def answer_poll(request, code):
     }
 
     return render(request, "votes/answer_poll.html", ctx)
+
+
+@login_required
+def close_poll(request, code):
+    poll = get_object_or_404(Poll, code=code)
+    room = f"answer_poll_room_{poll.code}"
+
+    if not poll.end_at and poll.created_by == request.user:
+        poll.end_at = timezone.now()
+        poll.save()
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(room, {"type": "send.close.poll"})
+
+        return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error"})

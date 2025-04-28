@@ -8,6 +8,7 @@ from .views import (
     new_poll,
     poll_detail,
     pollings,
+    close_poll
 )
 
 urlpatterns = [
@@ -15,6 +16,7 @@ urlpatterns = [
     path("pollings/", pollings, name="pollings"),
     path("new/", new_poll, name="new_poll"),
     path("go/", go_poll, name="go_poll"),
+    path("close-poll/<code>/", close_poll,name="close_poll"),
     path("manage-comments/<poll_slug>/", manage_comments, name="manage_comments"),
     path("@<username>/<poll_slug>/", poll_detail, name="poll_detail"),
     path("<code>/", answer_poll, name="answer_poll"),

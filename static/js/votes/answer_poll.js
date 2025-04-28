@@ -65,26 +65,47 @@ ws.onopen = event => {
 }
 
 const modal = document.getElementById('pollClosedModal');
-const closeModalBtn = document.querySelector('.close-modal');
-const confirmBtn = document.querySelector('.confirm-btn');
 
-if (closeModalBtn) {
-    closeModalBtn.addEventListener('click', function () {
-        modal.style.display = 'none';
-    });
-}
+function openModal(title, description, small) {
+    modal.style.display = 'block';
 
-if (confirmBtn) {
-    confirmBtn.addEventListener('click', function () {
-        modal.style.display = 'none';
-    });
-}
+    modal.innerHTML = `
+    <div class="modal-content">
+    <div class="modal-header">
+    <h2>${title}</h2>
+    <span class="close-modal">&times;</span>
+    </div>
+    <div class="modal-body">
+    <p>${description}</p>
+    <p>${small}</p>
+    </div>
+    <div class="modal-footer">
+    <button class="confirm-btn">OK</button>
+    </div>
+    </div>
+    `
+    const closeModalBtn = document.querySelector('.close-modal');
+    const confirmBtn = document.querySelector('.confirm-btn');
 
-window.addEventListener('click', function (event) {
-    if (event.target === modal) {
-        modal.style.display = 'none';
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', function () {
+            modal.style.display = 'none';
+        });
     }
-})
+
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', function () {
+            modal.style.display = 'none';
+        });
+    }
+
+    window.addEventListener('click', function (event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    })
+
+}
 
 ws.onmessage = event => {
     const data = JSON.parse(event.data)
@@ -175,6 +196,7 @@ ws.onmessage = event => {
         const countdownElement = document.getElementById('countdown');
         countdownElement.innerHTML = data.remaining_time;
 
+
         if (data.remaining_time.includes('m') &&
             !data.remaining_time.includes('h') &&
             !data.remaining_time.includes('d')) {
@@ -184,19 +206,21 @@ ws.onmessage = event => {
             }
         }
 
-        if (data.remaining_time === "Poll has ended") {
-            document.querySelector('.submit-vote').disabled = true;
-            document.querySelector('.submit-vote').textContent = 'Poll Closed';
+        if (data.remaining_time === "Poll has ended" || data.remaining_time === "Encerrada") {
+            countdownElement.classList.add("closed_poll")
+            countdownElement.innerHTML = 'Poll is Closed'
+            if (document.querySelector('.poll-end-text')) {
+                document.querySelector('.poll-end-text').remove()
+            }
 
-            const endedMessage = document.createElement('div');
-            endedMessage.className = 'poll-ended-message';
-            endedMessage.textContent = 'This poll has ended. Thank you for participating!';
-            document.querySelector('.poll-meta').appendChild(endedMessage);
-        }
+            if (document.querySelector('.submit-vote')) {
+                document.querySelector('.submit-vote').remove()
+            }
+        } 1
     }
 
     if (data.type === 'close_poll') {
-        modal.style.display = 'block';
+        openModal("Poll Closed", "This poll has been closed.", "No more votes will be accepted for this poll.")
 
         const closeBtn = document.querySelector("#closeBtn");
         if (closeBtn) {

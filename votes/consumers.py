@@ -1,5 +1,5 @@
-import json
 import asyncio
+import json
 
 from channels.exceptions import DenyConnection, StopConsumer
 from channels.generic.websocket import (
@@ -14,12 +14,11 @@ from .repository import (
     check_user,
     get_poll,
     get_poll_options_statistics,
+    get_remaining_time,
     get_total_votes,
     get_user,
-    vote_on_poll_option,
-    get_remaining_time,
     has_end_at,
-    try_closing_poll,
+    vote_on_poll_option,
 )
 
 
@@ -99,15 +98,10 @@ class VoteConsumer(AsyncWebsocketConsumer):
             case "request_countdown":
                 await self.send_remaining_time()
 
-            case "close_poll":
-                await self.channel_layer.group_send(
-                    self.room, {"type": "send.close.poll"}
-                )
-
     async def send_close_poll(self, event):
-        await try_closing_poll(self.poll, self.user)
-
-        await self.send(text_data=json.dumps({"type": "close_poll"}))
+        await self.send(
+            text_data=json.dumps({"type": "close_poll"})
+        )
 
     async def send_remaining_time(self):
         remaining_time = await get_remaining_time(self.poll)

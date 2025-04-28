@@ -123,6 +123,14 @@
     }
 }
 
+.closed_poll {
+    background-color: var(--primary);
+    padding: 10px;
+    color: white;
+    width: 50%;
+    margin : 0 auto;
+}
+
 .end_at {
     margin-top: 20px;
     text-align: center;
