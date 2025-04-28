@@ -30,7 +30,7 @@ class VoteConsumer(AsyncWebsocketConsumer):
         self.user = self.scope["user"]
         self.poll = await get_poll(code=code)
 
-        if (not await check_poll(self.poll)) or not (await check_user(self.user)):
+        if not (await check_user(self.user)):
             raise DenyConnection(
                 "Connection denied: invalid poll code or not allowed user"
             )
@@ -48,9 +48,8 @@ class VoteConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_send(self.room, {"type": "polls.update"})
 
-        if await has_end_at(self.poll):
+        if not await check_poll(self.poll) and await has_end_at(self.poll):
             asyncio.create_task(self.countdown_task())
-
             await self.send_remaining_time()
 
     async def disconnect(self, close_code):
@@ -106,7 +105,6 @@ class VoteConsumer(AsyncWebsocketConsumer):
                 )
 
     async def send_close_poll(self, event):
-        
         await try_closing_poll(self.poll, self.user)
 
         await self.send(text_data=json.dumps({"type": "close_poll"}))
