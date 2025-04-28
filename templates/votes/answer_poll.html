@@ -1,93 +1,91 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="{% static 'imgs/logo.png' %}" type="image/x-icon" />
-    <meta name="description" content="A Realtime Polling App for fast and simple pollings" />
-    <meta name="author" content="Ângelo Amândio Alcochete Francisco" />
-    <link rel="stylesheet" href="{% static 'css/layout/layout.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/votes/answer_poll.css' %}" />
-    <title>Answer Poll | Votox</title>
-  </head>
-  <body>
-    <div id="pollClosedModal" class="modal">
-    </div>
-    <div class="poll-card">
-      <div class="card-header">
-        <div class="logo">votox</div>
-        <button class="close-btn" onclick="window.location.href='{% url 'poll_detail' poll.created_by.username poll.slug %}'">×</button>
-      </div>
-
-      <div class="tab-menu">
-        <button class="tab-btn" onclick="openTab('comment')">Questions</button>
-        <button class="tab-btn active" onclick="openTab('answer')">Answer</button>
-      </div>
-
-      <div class="tab-content">
-        <div id="comment" class="tab-pane">
-          <div class="comment-section">
-            <span id="question_information" class="hide"></span>
-            <div class="comments-list" style="max-height: 280px;">
-              {% for question in questions %}
-                <div class="comment">
-                  <div class="comment-header">
-                    <span class="user-name">{{ question.author.username }}</span>
-                    <span class="comment-time" data-time="{{ question.created_at.isoformat }}"></span>
-                  </div>
-                  <p class="comment-text">{{ question.body }}</p>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="shortcut icon"
+              href="{% static 'imgs/logo.png' %}"
+              type="image/x-icon" />
+        <meta name="description"
+              content="A Realtime Polling App for fast and simple pollings" />
+        <meta name="author" content="Ângelo Amândio Alcochete Francisco" />
+        <link rel="stylesheet" href="{% static 'css/layout/layout.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/votes/answer_poll.css' %}" />
+        <title>Answer Poll | Votox</title>
+    </head>
+    <body>
+        <div id="pollClosedModal" class="modal"></div>
+        <div class="poll-card">
+            <div class="card-header">
+                <div class="logo">votox</div>
+                <button class="close-btn"
+                        onclick="window.location.href='{% url 'poll_detail' poll.created_by.username poll.slug %}'">
+                    ×
+                </button>
+            </div>
+            <div class="tab-menu">
+                <button class="tab-btn" onclick="openTab('comment')">Questions</button>
+                <button class="tab-btn active" onclick="openTab('answer')">Answer</button>
+            </div>
+            <div class="tab-content">
+                <div id="comment" class="tab-pane">
+                    <div class="comment-section">
+                        <span id="question_information" class="hide"></span>
+                        <div class="comments-list" style="max-height: 280px;">
+                            {% for question in questions %}
+                                <div class="comment">
+                                    <div class="comment-header">
+                                        <span class="user-name">{{ question.author.username }}</span>
+                                        <span class="comment-time" data-time="{{ question.created_at.isoformat }}"></span>
+                                    </div>
+                                    <p class="comment-text">{{ question.body }}</p>
+                                </div>
+                            {% empty %}
+                                <div class="no-quests">No questions/comments until now</div>
+                            {% endfor %}
+                        </div>
+                        <div class="comment-form">
+                            <textarea class="comment-input" placeholder="Add a comment or question..."></textarea>
+                            <button class="submit-comment">Send</button>
+                        </div>
+                    </div>
                 </div>
-              {% empty %}
-                <div class="no-quests">No questions/comments until now</div>
-              {% endfor %}
-            </div>
-
-            <div class="comment-form">
-              <textarea class="comment-input" placeholder="Add a comment or question..."></textarea>
-              <button class="submit-comment">Send</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="answer" class="tab-pane active">
-          <h3 class="poll-question">{{ poll.title }}</h3>
-
-          <div class="poll-options">
-            <div class="poll-options">
-              {% for option in options %}
-                <div class="poll-option" onclick="selectOption(this)" data-option-id="{{ option.id }}" id="option-{{ option.id }}">
-                  <span class="option-text">{{ option.option }}</span>
-                  <span class="option-percentage" id="percentage-{{ option.id }}">0%</span>
-                  <div class="progress-bar">
-                    <div class="progress" id="progress-{{ option.id }}" style="width: 0%"></div>
-                  </div>
+                <div id="answer" class="tab-pane active">
+                    <h3 class="poll-question">{{ poll.title }}</h3>
+                    <div class="poll-options">
+                        <div class="poll-options">
+                            {% for option in options %}
+                                <div class="poll-option"
+                                     onclick="selectOption(this)"
+                                     data-option-id="{{ option.id }}"
+                                     id="option-{{ option.id }}">
+                                    <span class="option-text">{{ option.option }}</span>
+                                    <span class="option-percentage" id="percentage-{{ option.id }}">0%</span>
+                                    <div class="progress-bar">
+                                        <div class="progress" id="progress-{{ option.id }}" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if not user_has_voted %}
+                        <button class="submit-vote" id="submit-vote-{{ request.user.id }}">Submit Vote</button>
+                    {% endif %}
+                    <div class="poll-meta">
+                        <span id="total-votes">Total votes: <span id="total_votes_number">0</span></span>
+                        <span id="active-users">• <span id="js-voting-user-count">0</span> person voting</span>
+                        {% if poll.end_at %}<span class="poll-end-text">• Poll ends in</span>{% endif %}
+                    </div>
+                    <div id="countdown" class="end_at"></div>
                 </div>
-              {% endfor %}
             </div>
-          </div>
-
-          {% if not user_has_voted %}
-            <button class="submit-vote" id="submit-vote-{{ request.user.id }}">Submit Vote</button>
-          {% endif %}
-          <div class="poll-meta">
-            <span id="total-votes">Total votes: <span id="total_votes_number">0</span></span>
-            <span id="active-users">• <span id="js-voting-user-count">0</span> person voting</span>
-            {% if poll.end_at %}
-              <span class="poll-end-text">• Poll ends in</span>
-            {% endif %}
-          </div>
-          <div id="countdown" class="end_at"></div>
         </div>
-      </div>
-    </div>
-
-    <script>
+        <script>
       const pollCode = '{{ poll.code }}'
       const userId = '{{ request.user.id }}'
       const username = '{{ request.user.username }}'
-    </script>
-    <script src="{% static 'js/votes/answer_poll.js' %}"></script>
-  </body>
+        </script>
+        <script src="{% static 'js/votes/answer_poll.js' %}"></script>
+    </body>
 </html>

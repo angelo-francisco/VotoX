@@ -1,53 +1,50 @@
 {% extends 'layouts/accounts.html' %}
-
 {% load socialaccount %}
 {% load static %}
-
 {% block head %}
-  <link rel="stylesheet" href="{% static 'css/accounts/login.css' %}">
+    <link rel="stylesheet" href="{% static 'css/accounts/login.css' %}">
 {% endblock %}
-
 {% block content %}
-<div class="login-container">
-    <div class="login-header">
-        <h1 class="login-title">Complete Sign Up</h1>
-        <p class="login-subtitle">Enter a username to finish signup.</p>
-    </div>
-
-    <div class="login-form">
-        <form action="" method="post">
-            {% csrf_token %}
-            {% for provider in socialaccount_providers %}
-              <li><a href="{% provider_login_url provider.id %}">{{ provider.name }}</a></li>
-            {% endfor %}
-
-            {% for field in form %}
-                <div class="form-item">
-                    {{ field }}
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    
-                    {% if field.errors %}
-                        <ul class="errors" style="list-style: none; color: red; padding: 0; margin: 5px 0;">
-                            {% for error in field.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
+    <div class="login-container">
+        <div class="login-header">
+            <h1 class="login-title">Complete Sign Up</h1>
+            <p class="login-subtitle">Enter a username to finish signup.</p>
+        </div>
+        <div class="login-form">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% for provider in socialaccount_providers %}
+                    <li>
+                        <a href="{% provider_login_url provider.id %}">{{ provider.name }}</a>
+                    </li>
+                {% endfor %}
+                {% for field in form %}
+                    <div class="form-item">
+                        {{ field }}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {% if field.errors %}
+                            <ul class="errors"
+                                style="list-style: none;
+                                       color: red;
+                                       padding: 0;
+                                       margin: 5px 0">
+                                {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="form-actions">
+                    <button type="submit" class="login-button">Go</button>
                 </div>
-
-            {% endfor %}
-            <div class="form-actions">
-                <button type="submit" class="login-button">Go</button>
-            </div>
-            <div class="login-links">
-                <span>Cancel Social Login? <a style="color: #E53935;"
-                    href="{% url 'socialaccount_login_cancelled' %}" class="login-link">CSL</a></span>
-            </div>
-        </form>
+                <div class="login-links">
+                    <span>Cancel Social Login? <a style="color: #E53935"
+    href="{% url 'socialaccount_login_cancelled' %}"
+    class="login-link">CSL</a></span>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-<script>
+    <script>
     const usernameInput = document.querySelector("#id_username")
     usernameInput.setAttribute('placeholder','')
 
@@ -55,5 +52,5 @@
     emailInput.setAttribute('placeholder','')
 
     if
-</script>
+    </script>
 {% endblock %}

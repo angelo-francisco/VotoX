@@ -1,12 +1,9 @@
 {% extends 'layouts/accounts.html' %}
-
 {% load socialaccount %}
 {% load static %}
-
 {% block head %}
-  <link rel="stylesheet" href="{% static 'css/accounts/login.css' %}" />
-
-  <style>
+    <link rel="stylesheet" href="{% static 'css/accounts/login.css' %}" />
+    <style>
     .login-button {
       display: flex;
       text-align: center;
@@ -46,22 +43,21 @@
       display: flex;
       gap: 10px;
     }
-  </style>
+    </style>
 {% endblock %}
-
 {% block content %}
-  {% include 'partials/messages.html' %}
-
-  <div class="login-container">
-    <div class="login-header">
-      <h1 class="login-title">Logout Page</h1>
-      <p class="login-subtitle" style="color: #333;">Are you sure about logout your session?</p>
+    {% include 'partials/messages.html' %}
+    <div class="login-container">
+        <div class="login-header">
+            <h1 class="login-title">Logout Page</h1>
+            <p class="login-subtitle" style="color: #333;">Are you sure about logout your session?</p>
+        </div>
+        <form action="{% url 'logout' %}" method="POST" id="logout-form">
+            {% csrf_token %}
+            <a href="#"
+               onclick="window.history.go(-1)"
+               class="login-button skip-button">Cancel</a>
+            <button class="login-button" id="logout-button">Logout</button>
+        </form>
     </div>
-
-    <form action="{% url 'logout' %}" method="POST" id="logout-form">
-      {% csrf_token %}
-      <a href="#" onclick="window.history.go(-1)" class="login-button skip-button">Cancel</a>
-      <button class="login-button" id="logout-button">Logout</button>
-    </form>
-  </div>
 {% endblock %}

@@ -1,27 +1,21 @@
 {% extends 'layouts/accounts.html' %}
-
 {% load socialaccount %}
 {% load static %}
-
 {% block head %}
-  <link rel="stylesheet" href="{% static 'css/accounts/login.css' %}"> 
+    <link rel="stylesheet" href="{% static 'css/accounts/login.css' %}">
 {% endblock %}
-
 {% block content %}
-{% include 'partials/messages.html' %}
-    
-<div class="login-container">
-    <div class="login-header">
-        <h1 class="login-title">Authentication Error</h1>
-        <p class="login-subtitle" style="color: #333;">An error ocurred while authentication, try again later.</p>
+    {% include 'partials/messages.html' %}
+    <div class="login-container">
+        <div class="login-header">
+            <h1 class="login-title">Authentication Error</h1>
+            <p class="login-subtitle" style="color: #333;">An error ocurred while authentication, try again later.</p>
+        </div>
+        {% include 'partials/loader.html' %}
     </div>
-
-    {% include 'partials/loader.html' %}
-</div>
-
-<script>
+    <script>
     setTimeout(() => {
         window.location.href="{% url 'login' %}"
     }, 3000)
-</script>
+    </script>
 {% endblock %}

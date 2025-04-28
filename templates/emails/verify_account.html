@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <style>
+    <head>
+        <style>
         .container {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             max-width: 600px;
@@ -26,19 +26,19 @@
             font-size: 12px;
             color: #7f8c8d;
         }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>Verify Your Email</h2>
-        <p>Hello, {{ username }}!</p>
-        <p>Use the following code to verify your account:</p>
-        <div class="code">{{ verification_code }}</div>
-        <p>This code will expire after 5 minutes.</p>
-        <div class="footer">
-            <p>If you didn't request this email, ignore it.</p>
-            <p>&copy;{{ site_name }}. All rights reserved</p>
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Verify Your Email</h2>
+            <p>Hello, {{ username }}!</p>
+            <p>Use the following code to verify your account:</p>
+            <div class="code">{{ verification_code }}</div>
+            <p>This code will expire after 5 minutes.</p>
+            <div class="footer">
+                <p>If you didn't request this email, ignore it.</p>
+                <p>&copy;{{ site_name }}. All rights reserved</p>
+            </div>
         </div>
-    </div>
-</body>
+    </body>
 </html>

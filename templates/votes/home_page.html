@@ -1,50 +1,45 @@
 {% extends 'layouts/layout.html' %}
 {% load static %}
-
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/votes/home_page.css' %}">
 {% endblock %}
-
-{% block title %}
-Home Page
-{% endblock %}
-
+{% block title %}Home Page{% endblock %}
 {% block content %}
-{% include 'partials/messages.html' %}
-<main>
-    <section class="welcome">
-        <div class="join-poll">
-            <span class="join-poll-main-span">Join a Poll</span>
-            <div class="input-group">
-                <span class="hash">#</span>
-                <input type="text" placeholder="Enter poll code">
-                <button class="hash2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
-                    </svg>
-                </button>
+    {% include 'partials/messages.html' %}
+    <main>
+        <section class="welcome">
+            <div class="join-poll">
+                <span class="join-poll-main-span">Join a Poll</span>
+                <div class="input-group">
+                    <span class="hash">#</span>
+                    <input type="text" placeholder="Enter poll code">
+                    <button class="hash2">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="16"
+                             height="16"
+                             fill="currentColor"
+                             viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+                        </svg>
+                    </button>
+                </div>
             </div>
-        </div>
-        <div class="text-center">
-            <h1>The easiest way to create and share polls with friends and family</h1>
-            <p>Engage your participants with real-time polls - create and share them easily</p> 
-            
-            
-            {% if not request.user.is_authenticated %}
-            <button class="btn-start" onclick="window.location.href='{% url 'login' %}'">
-                Get Started
-                <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
-            </button>
-            {% else %}
-
-            <button class="btn-start" onclick="window.location.href='{% if not request.user.is_authenticated %}{% url 'login' %}?next=/new-poll/{% else %}{% url 'new_poll' %}{% endif %}'">
-                Create a Poll
-                <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
-            </button>
-            {% endif %}
-        </div>
-    </section>
-</main>
-
-
+            <div class="text-center">
+                <h1>The easiest way to create and share polls with friends and family</h1>
+                <p>Engage your participants with real-time polls - create and share them easily</p>
+                {% if not request.user.is_authenticated %}
+                    <button class="btn-start" onclick="window.location.href='{% url 'login' %}'">
+                        Get Started
+                        <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                    </button>
+                {% else %}
+                    <button class="btn-start"
+                            onclick="window.location.href='{% if not request.user.is_authenticated %}{% url 'login' %}?next=/new-poll/{% else %}{% url 'new_poll' %}{% endif %}'">
+                        Create a Poll
+                        <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                    </button>
+                {% endif %}
+            </div>
+        </section>
+    </main>
 {% endblock %}

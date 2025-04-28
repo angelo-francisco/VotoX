@@ -1,8 +1,7 @@
 {% extends 'layouts/accounts.html' %}
 {% load static %}
-
 {% block head %}
-  <style>
+    <style>
     :root {
       --primary: #e53935;
       --primary-dark: #c62828;
@@ -121,42 +120,44 @@
         padding: 12px 15px;
       }
     }
-  </style>
+    </style>
 {% endblock %}
-
 {% block content %}
-  {% include 'partials/messages.html' %}
-
-  <div class="verification-container">
-    <div class="verification-header">
-      <h1>Verify Code</h1>
-      <p>
-        Was sent a 6 digits verification code to <strong>{{ request.session.email }}</strong>
-      </p>
+    {% include 'partials/messages.html' %}
+    <div class="verification-container">
+        <div class="verification-header">
+            <h1>Verify Code</h1>
+            <p>
+                Was sent a 6 digits verification code to <strong>{{ request.session.email }}</strong>
+            </p>
+        </div>
+        <form method="POST"
+              action="{% url 'verify_code' %}?purpose={{ purpose }}"
+              class="verification-form">
+            {% csrf_token %}
+            <div class="code-inputs">
+                <input type="text"
+                       name="verification_code"
+                       maxlength="6"
+                       title="Please, 6 digits code."
+                       required
+                       class="verification-code"
+                       autocomplete="off"
+                       autofocus />
+            </div>
+            <button type="submit" class="verification-button">Verify</button>
+        </form>
+        <div class="verification-footer">
+            <p>
+                Didn't receive the code? <a href="{% url 'verify_code' %}?purpose= {{ purpose }}&action=resend-code"
+    id="resend-code-link">Resend code</a>
+            </p>
+            <p>
+                or <a href="{% url 'signup' %}">Change e-mail</a>
+            </p>
+        </div>
     </div>
-
-    <form method="POST" action="{% url 'verify_code' %}?purpose={{ purpose }}" class="verification-form">
-      {% csrf_token %}
-
-      <div class="code-inputs">
-        <input type="text" name="verification_code" maxlength="6" title="Please, 6 digits code." required class="verification-code" autocomplete="off" autofocus />
-      </div>
-
-      <button type="submit" class="verification-button">Verify</button>
-    </form>
-
-    <div class="verification-footer">
-      <p>
-        Didn't receive the code? <a href="{% url 'verify_code' %}?purpose=
-        {{ purpose }}&action=resend-code" id="resend-code-link">Resend code</a>
-      </p>
-      <p>
-        or <a href="{% url 'signup' %}">Change e-mail</a>
-      </p>
-    </div>
-  </div>
-
-  <script>
+    <script>
     const urlParams = new URLSearchParams(window.location.search);
     const afterParam = urlParams.get('after');
 
@@ -182,5 +183,5 @@ document.addEventListener('DOMContentLoaded', function() {
         this.value = this.value.replace(/a-zA-z0-9]/g, '').toUpperCase();
     });
 });
-</script>
+    </script>
 {% endblock %}

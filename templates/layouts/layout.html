@@ -1,28 +1,24 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="pt">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="{% static 'imgs/logo.png' %}" type="image/x-icon">
-    <meta name="description" content="A Realtime Polling App for fast and simple pollings" />
-    <meta name="author" content="Ângelo Amândio Alcochete Francisco" />
-    <link rel="stylesheet" href="{% static 'css/layout/layout.css' %}">
-    {% block head %}
-
-    {% endblock %}
-    <title>
-      {% block title %}
-
-      {% endblock %} | Votox
-    </title>
-  </head>
-  <body>
-    {% include 'partials/navbar.html' %}
-
-    {% block content %}
-
-    {% endblock %}
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="shortcut icon"
+              href="{% static 'imgs/logo.png' %}"
+              type="image/x-icon">
+        <meta name="description"
+              content="A Realtime Polling App for fast and simple pollings" />
+        <meta name="author" content="Ângelo Amândio Alcochete Francisco" />
+        <link rel="stylesheet" href="{% static 'css/layout/layout.css' %}">
+        {% block head %}{% endblock %}
+        <title>
+            {% block title %}{% endblock %}
+            | Votox
+        </title>
+    </head>
+    <body>
+        {% include 'partials/navbar.html' %}
+        {% block content %}{% endblock %}
+    </body>
 </html>

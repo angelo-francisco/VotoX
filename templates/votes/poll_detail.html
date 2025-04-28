@@ -2,219 +2,301 @@
 {% load static %}
 {% load humanize %}
 {% block head %}
-  <link rel="stylesheet" href="{% static 'css/votes/pollings.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/votes/poll_detail.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/votes/pollings.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/votes/poll_detail.css' %}" />
 {% endblock %}
-{% block title %}
-  {{ poll.title }}
-{% endblock %}
+{% block title %}{{ poll.title }}{% endblock %}
 {% block content %}
-  <div id="pollClosedModal" class="modal"></div>
-  <div class="container">
-    <div class="poll-detail">
-      <div class="poll-main">
-        <div class="detail-card">
-          <div class="detail-header">
-            <img src="{{ poll.cover.url }}" alt="{{ poll.title }}" class="detail-cover" />
-            <div class="detail-overlay">
-              <span class="detail-category">{{ poll.get_category_display }}</span>
-              <h3 class="detail-title">{{ poll.title }}</h3>
-              <div class="detail-meta">
-                <div class="poll-stat">
-                  <svg class="star" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                  </svg>
-                  <span>10%{{ poll.rating }}</span>
+    <div id="pollClosedModal" class="modal"></div>
+    <div class="container">
+        <div class="poll-detail">
+            <div class="poll-main">
+                <div class="detail-card">
+                    <div class="detail-header">
+                        <img src="{{ poll.cover.url }}"
+                             alt="{{ poll.title }}"
+                             class="detail-cover" />
+                        <div class="detail-overlay">
+                            <span class="detail-category">{{ poll.get_category_display }}</span>
+                            <h3 class="detail-title">{{ poll.title }}</h3>
+                            <div class="detail-meta">
+                                <div class="poll-stat">
+                                    <svg class="star"
+                                         xmlns="http://www.w3.org/2000/svg"
+                                         width="16"
+                                         height="16"
+                                         fill="currentColor"
+                                         viewBox="0 0 16 16">
+                                        <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                                    </svg>
+                                    <span>10%{{ poll.rating }}</span>
+                                </div>
+                                <div class="poll-stat">
+                                    <svg class="vote-box"
+                                         xmlns="http://www.w3.org/2000/svg"
+                                         width="16"
+                                         height="16"
+                                         fill="currentColor"
+                                         viewBox="0 0 16 16">
+                                        <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1M.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8z" />
+                                    </svg>
+                                    <span>275</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-content">
+                        <p class="detail-description">{{ poll.description }}</p>
+                        <div class="author-card">
+                            <div class="main"
+                                 style="display: flex;
+                                        align-items: center;
+                                        justify-content: space-between;
+                                        flex-direction: row;
+                                        gap: 10px">
+                                {% if poll.created_by.profile_photo %}
+                                    <div class="author-logo">
+                                        <img src="{{ poll.created_by.profile_photo.url }}"
+                                             alt="Owner Profile Photo" />
+                                    </div>
+                                {% else %}
+                                    <div class="author-avatar">{{ poll.created_by.username|slice:'2'|upper }}</div>
+                                {% endif %}
+                                <div class="author-info">
+                                    <div class="author-name">{{ poll.created_by.username }}</div>
+                                    <div class="author-date">{{ poll.created_at|naturaltime }}</div>
+                                </div>
+                            </div>
+                            <div class="user-actions"
+                                 style="display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                        flex-wrap: wrap">
+                                <button type="submit"
+                                        class="{% if poll.is_active %}vote-btn{% else %}action-btn{% endif %}"
+                                        onclick="window.location.href='{% url 'answer_poll' poll.code %}'">
+                                    {% if poll.is_active %}
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="16"
+                                             height="16"
+                                             fill="currentColor"
+                                             class="bi bi-person"
+                                             viewBox="0 0 16 16">
+                                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                                        </svg>
+                                        Vote
+                                    {% else %}
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="16"
+                                             height="16"
+                                             fill="currentColor"
+                                             class="bi bi-eye"
+                                             viewBox="0 0 16 16">
+                                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+                                            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+                                        </svg>
+                                        Results
+                                    {% endif %}
+                                </button>
+                                {% if not poll.end_at and poll.created_by == request.user %}
+                                    <button class="action-btn" id="closeBtn">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="16"
+                                             height="16"
+                                             fill="currentColor"
+                                             class="bi bi-x-circle"
+                                             viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                                        </svg>
+                                        Close
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="poll-stat">
-                  <svg class="vote-box" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1M.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8z" />
-                  </svg>
-                  <span>275</span>
+                <div class="detail-card">
+                    <div class="detail-content">
+                        <h2>Comments</h2>
+                        {% if request.user.is_authenticated %}
+                            <form method="post"
+                                  hx-post="{% url 'manage_comments' poll_slug=poll.slug %}"
+                                  hx-trigger="submit"
+                                  hx-target="#comments"
+                                  hx-indicator=".loader">
+                                {% csrf_token %}
+                                <div class="comment-form">
+                                    <textarea name="comment"
+                                              placeholder="Write your comment right here"
+                                              rows="1"
+                                              class="comment-input"
+                                              required></textarea>
+                                    <button type="submit" class="vote-btn-2" style="cursor: pointer;">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="16"
+                                             height="16"
+                                             style="color: white"
+                                             fill="currentColor"
+                                             class="bi bi-send"
+                                             viewBox="0 0 16 16">
+                                            <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </form>
+                        {% endif %}
+                        {% include 'partials/comments.html' %}
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-
-          <div class="detail-content">
-            <p class="detail-description">{{ poll.description }}</p>
-
-            <div class="author-card">
-              <div class="main" style="display: flex;align-items: center;justify-content: space-between;flex-direction: row;gap: 10px;">
-                {% if poll.created_by.profile_photo %}
-                  <div class="author-logo">
-                    <img src="{{ poll.created_by.profile_photo.url }}" alt="Owner Profile Photo" />
-                  </div>
-                {% else %}
-                  <div class="author-avatar">{{ poll.created_by.username|slice:'2'|upper }}</div>
-                {% endif %}
-
-                <div class="author-info">
-                  <div class="author-name">{{ poll.created_by.username }}</div>
-                  <div class="author-date">{{ poll.created_at|naturaltime }}</div>
+            <div class="poll-sidebar">
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="16"
+                             height="16"
+                             fill="currentColor"
+                             viewBox="0 0 16 16">
+                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383-4.708 2.825L15 11.105V5.383zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z" />
+                        </svg>
+                        Share
+                    </h3>
+                    <div class="qr-container">
+                        <div class="qr-code"
+                             style="display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    width: 100%;
+                                    padding-top: 10px">{% include 'partials/loader.html' %}</div>
+                        <p class="qr-help">Scan and share it</p>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="copyLink('{{ link }}')" id="copy-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="16"
+                                 height="16"
+                                 fill="currentColor"
+                                 class="bi bi-clipboard"
+                                 viewBox="0 0 16 16">
+                                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
+                                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
+                            </svg>
+                            Copy
+                        </button>
+                        <button class="action-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="16"
+                                 height="16"
+                                 fill="currentColor"
+                                 class="bi bi-floppy"
+                                 viewBox="0 0 16 16">
+                                <path d="M11 2H9v3h2z" />
+                                <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z" />
+                            </svg>
+                            Save
+                        </button>
+                    </div>
                 </div>
-              </div>
-
-              <div class="user-actions" style="display: flex;align-items: center;gap: 10px;flex-wrap: wrap;">
-                <button type="submit" class="vote-btn" onclick="window.location.href='{% url 'answer_poll' poll.code %}'">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
-                  </svg>Vote
-                </button>
-                {% if not poll.end_at and poll.created_by == request.user %}
-                  <button class="action-btn" id="closeBtn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
-                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                      <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
-                    </svg>Close
-                  </button>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="detail-card">
-          <div class="detail-content">
-            <h2>Comments</h2>
-            {% if request.user.is_authenticated %}
-              <form method="post" hx-post="{% url 'manage_comments' poll_slug=poll.slug %}" hx-trigger="submit" hx-target="#comments" hx-indicator=".loader">
-                {% csrf_token %}
-                <div class="comment-form">
-                  <textarea name="comment" placeholder="Write your comment right here" rows="1" class="comment-input" required></textarea>
-                  <button type="submit" class="vote-btn-2" style="cursor: pointer;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="color: white;" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
-                      <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
-                    </svg>
-                  </button>
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="16"
+                             height="16"
+                             fill="currentColor"
+                             viewBox="0 0 16 16">
+                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+                        </svg>
+                        Poll Details
+                    </h3>
+                    <div class="detail-items">
+                        <div class="detail-item">
+                            <span class="detail-label">Status</span>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Starting</span>
+                            <span class="detail-value">{{ poll.created_at|date:'d/m/Y' }}</span>
+                        </div>
+                        {% if poll.end_at %}
+                            <div class="detail-item">
+                                <span class="detail-label">Ending</span>
+                                <span class="detail-value">{{ poll.end_at|date:'d/m/Y' }}</span>
+                            </div>
+                        {% endif %}
+                        {% if poll.was_edited %}
+                            <div class="detail-item">
+                                <span class="detail-label">Edited at</span>
+                                <span class="detail-value">{{ poll.updated_at|date:'d/m/Y' }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="detail-item">
+                            <span class="detail-label">Visibility</span>
+                            <span class="detail-value">
+                                {% if poll.is_public %}
+                                    Public
+                                {% else %}
+                                    Private
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-              </form>
-            {% endif %}
-
-            {% include 'partials/comments.html' %}
-          </div>
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="16"
+                             height="16"
+                             fill="currentColor"
+                             viewBox="0 0 16 16">
+                            <path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5zm1.886 6.914L15 7.151V12.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7.15l6.614 1.764a1.5 1.5 0 0 0 .772 0zM1.5 4h13a.5.5 0 0 1 .5.5v1.616L8.129 7.948a.5.5 0 0 1-.258 0L1 6.116V4.5a.5.5 0 0 1 .5-.5z" />
+                        </svg>
+                        Statistics
+                    </h3>
+                    <div class="detail-items">
+                        <div class="detail-item">
+                            <span class="detail-label">Total votes</span>
+                            <span class="detail-value">128</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Views</span>
+                            <span class="detail-value">{{ poll.views }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Shares count</span>
+                            <span class="detail-value">10</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="16"
+                             height="16"
+                             fill="currentColor"
+                             viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                            <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
+                        </svg>
+                        Related polls
+                    </h3>
+                    <div class="related-polls">
+                        {% for related in related_polls %}
+                            <a href="" class="related-poll-item">
+                                <div class="related-poll-title">{{ related.title }}</div>
+                                <div class="related-poll-votes">{{ related.vote_count }} votos</div>
+                            </a>
+                        {% empty %}
+                            <p class="empty-related">No related polls availabe.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <div class="poll-sidebar">
-        <div class="sidebar-card">
-          <h3 class="sidebar-title">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383-4.708 2.825L15 11.105V5.383zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z" />
-            </svg>Share
-          </h3>
-          <div class="qr-container">
-            <div class="qr-code" style="display: flex;justify-content: center;align-items: center;width: 100%;padding-top: 10px;">
-              {% include 'partials/loader.html' %}
-            </div>
-            <p class="qr-help">Scan and share it</p>
-          </div>
-          <div class="action-buttons">
-            <button class="action-btn" onclick="copyLink('{{ link }}')" id="copy-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
-                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
-                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
-              </svg>Copy
-            </button>
-            <button class="action-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy" viewBox="0 0 16 16">
-                <path d="M11 2H9v3h2z" />
-                <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z" />
-              </svg>Save
-            </button>
-          </div>
-        </div>
-
-        <div class="sidebar-card">
-          <h3 class="sidebar-title">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
-            </svg>Poll Details
-          </h3>
-          <div class="detail-items">
-            <div class="detail-item">
-              <span class="detail-label">Status</span>
-              <span class="status-badge status-active">Active</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Starting</span>
-              <span class="detail-value">{{ poll.created_at|date:'d/m/Y' }}</span>
-            </div>
-
-            {% if poll.end_at %}
-              <div class="detail-item">
-                <span class="detail-label">Ending</span>
-                <span class="detail-value">{{ poll.end_at|date:'d/m/Y' }}</span>
-              </div>
-            {% endif %}
-
-            {% if poll.was_edited %}
-              <div class="detail-item">
-                <span class="detail-label">Edited at</span>
-                <span class="detail-value">{{ poll.updated_at|date:'d/m/Y' }}</span>
-              </div>
-            {% endif %}
-
-            <div class="detail-item">
-              <span class="detail-label">Visibility</span>
-              <span class="detail-value">
-                {% if poll.is_public %}
-                  Public
-                {% else %}
-                  Private
-                {% endif %}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="sidebar-card">
-          <h3 class="sidebar-title">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5zm1.886 6.914L15 7.151V12.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7.15l6.614 1.764a1.5 1.5 0 0 0 .772 0zM1.5 4h13a.5.5 0 0 1 .5.5v1.616L8.129 7.948a.5.5 0 0 1-.258 0L1 6.116V4.5a.5.5 0 0 1 .5-.5z" />
-            </svg>Statistics
-          </h3>
-          <div class="detail-items">
-            <div class="detail-item">
-              <span class="detail-label">Total votes</span>
-              <span class="detail-value">128</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Views</span>
-              <span class="detail-value">{{ poll.views }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Shares count</span>
-              <span class="detail-value">10</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="sidebar-card">
-          <h3 class="sidebar-title">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-              <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
-            </svg>Related polls
-          </h3>
-          <div class="related-polls">
-            {% for related in related_polls %}
-              <a href="" class="related-poll-item">
-                <div class="related-poll-title">{{ related.title }}</div>
-                <div class="related-poll-votes">{{ related.vote_count }} votos</div>
-              </a>
-            {% empty %}
-              <p class="empty-related">No related polls availabe.</p>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-  <script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script>
   document.addEventListener('DOMContentLoaded', async function () {
     const link = '{{ link }}'
     document.querySelector('.qr-code').innerHTML = ''
@@ -282,17 +364,17 @@
       .write([item])
       .then(() => {
         document.querySelector('#copy-btn').innerHTML = `
-                      <svg xmlns="http://www.w3.org/2000/svg" style="color: green;" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
-                        <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
-                      </svg> Copied`
+          <svg xmlns="http://www.w3.org/2000/svg" style="color: green;" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+            <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z" />
+          </svg> Copied`
         document.querySelector('#copy-btn').setAttribute('disabled', '')
 
         setTimeout(() => {
           document.querySelector('#copy-btn').innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
-                          <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
-                          <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
-                        </svg> Copy`
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
+                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
+              </svg> Copy`
         }, 3000)
       })
       .catch((err) => {
@@ -314,12 +396,12 @@
           closeBtn.disabled = true;
           closeBtn.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
-              <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+              <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
             </svg>Closed`;
           closeBtn.classList.add('disabled-btn');
         }
       })
   })
   {% endif %}
-</script>
+    </script>
 {% endblock %}

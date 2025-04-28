@@ -1,15 +1,10 @@
 {% extends 'layouts/layout.html' %}
 {% load static %}
-
-{% block title %}
-  New Poll
-{% endblock %}
-
+{% block title %}New Poll{% endblock %}
 {% block head %}
-  <link rel="stylesheet" href="{% static 'css/votes/pollings.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/votes/new_poll.css' %}" />
-
-  <style>
+    <link rel="stylesheet" href="{% static 'css/votes/pollings.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/votes/new_poll.css' %}" />
+    <style>
     .form-errors {
       margin-bottom: 20px;
     }
@@ -29,214 +24,193 @@
       margin-top: 5px;
       display: block;
     }
-  </style>
+    </style>
 {% endblock %}
-
 {% block content %}
-<div class="container">
-    {% include 'partials/messages.html' %}
-    <div class="header">
-      <h1>Create a New Poll</h1>
-      <span class="helper-h1">Share your question with the community and gather opinions</span>
+    <div class="container">
+        {% include 'partials/messages.html' %}
+        <div class="header">
+            <h1>Create a New Poll</h1>
+            <span class="helper-h1">Share your question with the community and gather opinions</span>
+        </div>
+        <div class="poll-form-container">
+            <form method="POST"
+                  action="{% url 'new_poll' %}"
+                  enctype="multipart/form-data"
+                  class="poll-form">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="form-errors">
+                        {% for error in form.non_field_errors %}<div class="alert alert-error">{{ error }}</div>{% endfor %}
+                    </div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="cover">{{ form.cover.label }}</label>
+                    <div class="cover-upload">
+                        {{ form.cover }}
+                        {% if form.cover.errors %}
+                            <div class="field-errors">
+                                {% for error in form.cover.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                            </div>
+                        {% endif %}
+                        <label for="cover" class="upload-preview">
+                            <img id="cover-preview" src="#" alt="Cover preview" class="preview-image" />
+                            <div class="upload-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="24"
+                                     height="24"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="2"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
+                                    <line x1="16" y1="5" x2="22" y2="5"></line>
+                                    <line x1="19" y1="2" x2="19" y2="8"></line>
+                                    <circle cx="9" cy="9" r="2"></circle>
+                                    <path d="M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                                </svg>
+                                <span class="placeholder-text">Click to upload an image</span>
+                                <span class="file-size-info">JPG, PNG, JPEG up to 5MB</span>
+                            </div>
+                        </label>
+                        <button type="button" class="clear-image-btn" style="display: none;">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="16"
+                                 height="16"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <!-- Poll Title -->
+                <div class="form-group">
+                    <label for="title">Poll Question</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="field-errors">
+                            {% for error in form.title.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="description">{{ form.description.label }}</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <div class="field-errors">
+                            {% for error in form.description.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="category">{{ form.category.label }}</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                        <div class="field-errors">
+                            {% for error in form.category.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label>Poll Options</label>
+                    <div class="options-container">
+                        {% for option in options %}<div class="option-input-group">{{ option }}</div>{% endfor %}
+                        {% if options.errors %}
+                            <div class="field-errors">
+                                {% for error in options.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <button type="button" class="add-option-btn">+ Add Another Option</button>
+                </div>
+                <div class="form-group settings-group">
+                    <label>Poll Settings</label>
+                    {% if form.is_public.errors %}
+                        <div class="field-errors">
+                            {% for error in form.is_public.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if form.is_anonymous.errors %}
+                        <div class="field-errors">
+                            {% for error in form.is_anonymous.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if form.results_visible.errors %}
+                        <div class="field-errors">
+                            {% for error in form.results_visible.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if form.end_at.errors %}
+                        <div class="field-errors">
+                            {% for error in form.end_at.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if form.max_votes.errors %}
+                        <div class="field-errors">
+                            {% for error in form.max_votes.errors %}<small class="error">{{ error }}</small>{% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>{{ form.is_public.label }}</h4>
+                            <p>{{ form.is_public.help_text }}</p>
+                        </div>
+                        <label class="switch">
+                            {{ form.is_public }}
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>{{ form.is_anonymous.label }}</h4>
+                            <p>{{ form.is_anonymous.help_text }}</p>
+                        </div>
+                        <label class="switch">
+                            {{ form.is_anonymous }}
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>{{ form.results_visible.label }}</h4>
+                            <p>{{ form.results_visible.help_text }}</p>
+                        </div>
+                        <label class="switch">
+                            {{ form.results_visible }}
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>{{ form.end_at.label }}</h4>
+                            <p>{{ form.end_at.help_text }}</p>
+                        </div>
+                        {{ form.end_at }}
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>{{ form.max_votes.label }}</h4>
+                            <p>{{ form.max_votes.help_text }}</p>
+                        </div>
+                        {{ form.max_votes }}
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">Create Poll</button>
+                    <a href="{% url 'pollings' %}" class="cancel-btn">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <div class="poll-form-container">
-      <form method="POST" action="{% url 'new_poll' %}" enctype="multipart/form-data" class="poll-form">
-        {% csrf_token %}
-        {% if form.non_field_errors %}
-          <div class="form-errors">
-            {% for error in form.non_field_errors %}
-              <div class="alert alert-error">{{ error }}</div>
-            {% endfor %}
-          </div>
-        {% endif %}
-        <div class="form-group">
-          <label for="cover">{{ form.cover.label }}</label>
-          <div class="cover-upload">
-            {{ form.cover }}
-            {% if form.cover.errors %}
-              <div class="field-errors">
-                {% for error in form.cover.errors %}
-                  <small class="error">{{ error }}</small>
-                {% endfor %}
-              </div>
-            {% endif %}
-            <label for="cover" class="upload-preview">
-              <img id="cover-preview" src="#" alt="Cover preview" class="preview-image" />
-              <div class="upload-placeholder">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
-                  <line x1="16" y1="5" x2="22" y2="5"></line>
-                  <line x1="19" y1="2" x2="19" y2="8"></line>
-                  <circle cx="9" cy="9" r="2"></circle>
-                  <path d="M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
-                </svg>
-                <span class="placeholder-text">Click to upload an image</span>
-                <span class="file-size-info">JPG, PNG, JPEG up to 5MB</span>
-              </div>
-            </label>
-            <button type="button" class="clear-image-btn" style="display: none;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Poll Title -->
-        <div class="form-group">
-          <label for="title">Poll Question</label>
-          {{ form.title }}
-          {% if form.title.errors %}
-            <div class="field-errors">
-              {% for error in form.title.errors %}
-                <small class="error">{{ error }}</small>
-              {% endfor %}
-            </div>
-          {% endif %}
-        </div>
-
-        <div class="form-group">
-          <label for="description">{{ form.description.label }}</label>
-          {{ form.description }}
-          {% if form.description.errors %}
-            <div class="field-errors">
-              {% for error in form.description.errors %}
-                <small class="error">{{ error }}</small>
-              {% endfor %}
-            </div>
-          {% endif %}
-        </div>
-
-        <div class="form-group">
-          <label for="category">{{ form.category.label }}</label>
-          {{ form.category }}
-          {% if form.category.errors %}
-            <div class="field-errors">
-              {% for error in form.category.errors %}
-                <small class="error">{{ error }}</small>
-              {% endfor %}
-            </div>
-          {% endif %}
-        </div>
-
-        <div class="form-group">
-          <label>Poll Options</label>
-          <div class="options-container">
-            {% for option in options %}
-              <div class="option-input-group">{{ option }}</div>
-            {% endfor %}
-
-            {% if options.errors %}
-              <div class="field-errors">
-                {% for error in options.errors %}
-                  <small class="error">{{ error }}</small>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-          <button type="button" class="add-option-btn">+ Add Another Option</button>
-        </div>
-
-        <div class="form-group settings-group">
-          <label>Poll Settings</label>
-
-          {% if form.is_public.errors %}
-            <div class="field-errors">
-              {% for error in form.is_public.errors %}
-                <small class="error">{{ error }}</small>
-              {% endfor %}
-            </div>
-          {% endif %}
-          {% if form.is_anonymous.errors %}
-            <div class="field-errors">
-              {% for error in form.is_anonymous.errors %}
-                <small class="error">{{ error }}</small>
-              {% endfor %}
-            </div>
-          {% endif %}
-          {% if form.results_visible.errors %}
-            <div class="field-errors">
-              {% for error in form.results_visible.errors %}
-                <small class="error">{{ error }}</small>
-              {% endfor %}
-            </div>
-          {% endif %}
-          {% if form.end_at.errors %}
-            <div class="field-errors">
-              {% for error in form.end_at.errors %}
-                <small class="error">{{ error }}</small>
-              {% endfor %}
-            </div>
-          {% endif %}
-          {% if form.max_votes.errors %}
-            <div class="field-errors">
-              {% for error in form.max_votes.errors %}
-                <small class="error">{{ error }}</small>
-              {% endfor %}
-            </div>
-          {% endif %}
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>{{ form.is_public.label }}</h4>
-              <p>{{ form.is_public.help_text }}</p>
-            </div>
-            <label class="switch">
-              {{ form.is_public }}
-              <span class="slider round"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>{{ form.is_anonymous.label }}</h4>
-              <p>{{ form.is_anonymous.help_text }}</p>
-            </div>
-            <label class="switch">
-              {{ form.is_anonymous }}
-              <span class="slider round"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>{{ form.results_visible.label }}</h4>
-              <p>{{ form.results_visible.help_text }}</p>
-            </div>
-            <label class="switch">
-              {{ form.results_visible }}
-              <span class="slider round"></span>
-            </label>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>{{ form.end_at.label }}</h4>
-              <p>{{ form.end_at.help_text }}</p>
-            </div>
-            {{ form.end_at }}
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>{{ form.max_votes.label }}</h4>
-              <p>{{ form.max_votes.help_text }}</p>
-            </div>
-            {{ form.max_votes }}
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="submit-btn">Create Poll</button>
-          <a href="{% url 'pollings' %}" class="cancel-btn">Cancel</a>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script>
+    <script>
     document.getElementById('cover').addEventListener('change', function (e) {
       const file = e.target.files[0]
       if (file) {
@@ -331,5 +305,5 @@
         uploadPreview.style.border = '2px dashed var(--border)'
       })
     })
-  </script>
+    </script>
 {% endblock %}
