@@ -169,7 +169,7 @@ a.clicked {
     display: none;
 }
 
-@media (max-width: 728px) {
+@media (max-width: 1024px) {
     .dropdown-menu {
         min-width: 140px;
         font-size: 0.9rem;
@@ -257,7 +257,7 @@ a.clicked {
     transform: scale(1.05);
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
     .items {
         position: fixed;
         top: 0;
@@ -308,6 +308,8 @@ a.clicked {
         opacity: 1;
         visibility: visible;
     }
+
+    .
 }
 
 .profile-img {
