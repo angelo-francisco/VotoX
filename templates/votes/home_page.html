@@ -51,9 +51,9 @@
   <script>
     document.querySelector('.hash2').addEventListener('click', () => {
       const value = document.querySelector('#go_code_input')
-    
-      if (value.value) {
-        window.location.href = "{% url 'go_poll' %}?input_code=" + value.value
+  
+      if (value.value.trim()) {
+        window.location.href = "{% url 'go_poll' %}?input_code=" + value.value.trim()
       }
     })
   </script>
