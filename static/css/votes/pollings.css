@@ -638,3 +638,11 @@ input[type="text"]:focus {
     justify-content: space-around;
   }
 }
+
+.empty-comments {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-light);
+  background-color: var(--gray-bg);
+  border-radius: 8px;
+}

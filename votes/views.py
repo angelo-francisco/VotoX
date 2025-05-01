@@ -20,6 +20,21 @@ def home_page(request):
 
 
 def pollings(request):
+    partialName = "partials/poll.html"
+    flag = request.GET.get("flag", "")
+
+    if flag == "all_polls":
+        polls = Poll.objects.filter(is_public=True)
+        ctx = {"polls": polls}
+
+        return render(request, partialName, ctx)
+    
+    if flag == "my_polls":
+        polls = Poll.objects.filter(created_by=request.user).order_by("-created_at")
+
+        ctx = {"polls": polls}
+        return render(request, partialName, ctx)
+
     polls = Poll.objects.filter(is_public=True)
 
     ctx = {"polls": polls}
